@@ -9,7 +9,7 @@ module.exports = function (app) {
     // Auth -------------------------------
     
     app.post("/api/signup", function (req, res) {
-        Users.signup(req.body.user.email, req.body.user.password, function (data) {
+        Users.signup(req.body.user, function (data) {
             res.json(data)
         })
     })

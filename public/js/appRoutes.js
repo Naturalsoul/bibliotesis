@@ -18,6 +18,11 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', f
             controller: "EmailVerificationController"
         })
         
+        .when("/plataforma", {
+            templateUrl: "views/plataforma.html",
+            controller: "MainController"
+        })
+        
         .otherwise({
             redirectTo: "/"
         })

@@ -3,6 +3,8 @@ angular.module("bibliotesis", [
     "appRoutes",
     "MainCtrl",
     "HomeCtrl",
+    "AuthCtrl",
+    "EmailVerificationCtrl",
     "AuthService"
 ])
 
