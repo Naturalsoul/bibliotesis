@@ -23,6 +23,16 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', f
             controller: "MainController"
         })
         
+        .when("/plataforma/cuenta", {
+            templateUrl: "views/cuenta.html",
+            controller: "AccountController"
+        })
+        
+        .when("/plataforma/docentes", {
+            templateUrl: "views/docentes.html",
+            controller: "DocentesController"
+        })
+        
         .otherwise({
             redirectTo: "/"
         })

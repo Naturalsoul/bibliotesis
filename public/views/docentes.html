@@ -1,0 +1,257 @@
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <ul class="nav justify-content-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="#" ng-model="showForms" ng-click="showForms = 1">Agregar Alumnos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" ng-model="showForms" ng-click="showForms = 2">Grupos de Estudio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" ng-model="showForms" ng-click="showForms = 3">Avances</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#">Disabled</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <br>
+    <div class="row" ng-show="showForms == 1">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    Agregar un nuevo Alumno
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <form ng-submit="addNewStudent()">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label for="name">
+                                                Nombre del Alumno
+                                            </label>
+                                            <input type="text" name="name" class="form-control" ng-model="nStudent.name" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label for="email">
+                                                Correo Electrónico del Alumno
+                                            </label>
+                                            <input type="email" name="email" class="form-control" ng-model="nStudent.email" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label for="password">
+                                                Contraseña del Alumno
+                                            </label>
+                                            <input type="password" name="password" class="form-control" ng-model="nStudent.password" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label for="studyGroup">
+                                                Grupo de Estudio
+                                            </label>
+                                            <input type="text" name="studyGroup" class="form-control" ng-model="nStudent.studyGroup" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12 float-right">
+                                        <button type="submit" class="btn btn-primary">
+                                            Agregar
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" ng-show="showForms == 2">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    Grupos de Estudio
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <form ng-submit="updateStudyGroup()">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label for="name">
+                                                Grupo de Estudio
+                                            </label>
+                                            <select ng-model="studyGroup.name" class="form-control" ng-change="showStudyGroupInputs()">
+                                                <option ng-repeat="s in studyGroupList" value="{{s.name}}">
+                                                    {{s.name}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div ng-show="showStudyGroupInputsFlag">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label for="theme">
+                                                    Tema
+                                                </label>
+                                                <input type="text" name="theme" class="form-control" ng-model="studyGroup.theme">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-10">
+                                            <div class="form-group">
+                                                <label for="addNewStudents">
+                                                    Agregar Alumnos al Grupo de Estudio
+                                                </label>
+                                                <select class="form-control" ng-model="studentToAdd">
+                                                    <option ng-repeat="sl in studentList" value="{{sl.email}}">
+                                                        {{sl.email}}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <button type="button" class="btn btn-success" ng-click="addUserToGroup()">
+                                                <i class="fas fa-user-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col" class="align-middle text-center">Nombre del Alumno</th>
+                                                        <th scope="col" class="align-middle text-center">Correo Electrónico</th>
+                                                        <th scope="col" class="align-middle text-center">Acciones</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="s in studyGroup.students">
+                                                        <th scope="row" class="align-middle text-center">{{s.name}}</th>
+                                                        <td class="align-middle text-center">{{s.email}}</td>
+                                                        <td class="align-middle text-center">
+                                                            <a href="#" ng-click="removeStudent(s.email)"><i class="fas fa-minus-circle"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <button type="submit" class="btn btn-primary float-right">
+                                                Actualizar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" ng-show="showForms == 3">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    Avances
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="name">
+                                    Grupo de Estudio
+                                </label>
+                                <select ng-model="advance.studyGroup" class="form-control" ng-change="showAdvanceInputs()">
+                                    <option ng-repeat="s in studyGroupList" value="s.name">
+                                        {{s.name}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div ng-show="showAdvanceInputsFlag">
+                        <div class="row">
+                            <div class="col-sm-12 float-right">
+                                <button type="button" class="btn btn-primary" ng-click="requestAdvance()">
+                                    Solicitar nuevo Avance
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row" ng-show="requestAdvanceFlag">
+                            <div class="col-sm-12">
+                                <form ng-submit="requestNewAdvance()">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label for="advanceTitle">
+                                                    Título del Avance
+                                                </label>
+                                                <input type="text" name="advanceTitle" class="form-control" ng-model="advance.title">
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <label for="advanceDescription">
+                                                Descripción del Avance
+                                            </label>
+                                            <textarea class="form-control" ng-model="advance.description" rows="3"></textarea>
+                                        </div>
+                                        <div class="col-sm-12 float-right">
+                                            <button type="submit" class="btn btn-primary">
+                                                Solicitar Avance
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="row" ng-repeat="a in advanceList">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="align-middle text-center">Nombre del Avance</th>
+                                        <th scope="col" class="align-middle text-center">Documentos</th>
+                                        <th scope="col" class="align-middle text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="s in studyGroup.students">
+                                        <th scope="row" class="align-middle text-center">{{s.name}}</th>
+                                        <td class="align-middle text-center">{{s.email}}</td>
+                                        <td class="align-middle text-center">
+                                            <i class="fas fa-minus-circle"></i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

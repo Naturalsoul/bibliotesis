@@ -5,7 +5,11 @@ angular.module("bibliotesis", [
     "HomeCtrl",
     "AuthCtrl",
     "EmailVerificationCtrl",
-    "AuthService"
+    "AccountCtrl",
+    "DocentesCtrl",
+    "AuthService",
+    "AccountService",
+    "DocentesService"
 ])
 
 

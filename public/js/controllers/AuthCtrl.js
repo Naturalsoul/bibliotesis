@@ -10,8 +10,6 @@ angular.module("AuthCtrl", ["cp.ngConfirm"]).controller("AuthController", ["$sco
     }
     
     $scope.login = function () {
-        console.log($scope.loginData)
-        
         AuthService.login($scope.loginData, function (res) {
             if (res.logged) {
                 window.location.replace("/plataforma")

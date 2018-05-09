@@ -14,7 +14,8 @@ let UsersSchema = new Schema ({
     status: {type: Boolean, default: false},
     activationString: {type: String, default: ""},
     student: {type: Boolean, default: true},
-    changePassword: {type: Boolean, default: false}
+    changePassword: {type: Boolean, default: false},
+    level: {type: Number, default: 1}
 })
 
 UsersSchema.plugin(autoIncrement.plugin, {
