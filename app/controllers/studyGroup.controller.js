@@ -1,8 +1,8 @@
-const studyGroup = require("../models/studyGroup.model")
+const StudyGroup = require("../models/studyGroup.model")
 
 module.exports = {
     get: function (next) {
-        studyGroup.find({}, function (err, data) {
+        StudyGroup.find({}, function (err, data) {
             if (err) throw err
             
             if (data != null) {
@@ -12,14 +12,13 @@ module.exports = {
     },
     
     update: function (studyGroup, next) {
-        studyGroup.update({id: studyGroup.id}, {
+        StudyGroup.update({name: studyGroup.name}, {
             $set: {
                 theme: studyGroup.theme,
                 students: studyGroup.students
             }
         }, function (err, data) {
             if (err) throw err
-            
             
             if (data != null) {
                 next({updated: true})

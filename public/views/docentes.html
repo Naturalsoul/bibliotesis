@@ -131,7 +131,7 @@
                                             </div>
                                         </div>
                                         <div class="col-sm-2">
-                                            <button type="button" class="btn btn-success" ng-click="addUserToGroup()">
+                                            <button type="button" class="btn btn-success" ng-click="addUserToGroup()" style="margin-top: 30px;">
                                                 <i class="fas fa-user-plus"></i>
                                             </button>
                                         </div>
@@ -202,7 +202,7 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="row" ng-show="requestAdvanceFlag">
+                        <div class="row" ng-show="requestAdvanceFlag" style="margin-top: 15px;">
                             <div class="col-sm-12">
                                 <form ng-submit="requestNewAdvance()">
                                     <div class="row">
@@ -211,17 +211,29 @@
                                                 <label for="advanceTitle">
                                                     Título del Avance
                                                 </label>
-                                                <input type="text" name="advanceTitle" class="form-control" ng-model="advance.title">
+                                                <input type="text" name="advanceTitle" class="form-control" ng-model="advance.title" required>
                                             </div>
                                         </div>
                                         <div class="col-sm-12">
                                             <label for="advanceDescription">
                                                 Descripción del Avance
                                             </label>
-                                            <textarea class="form-control" ng-model="advance.description" rows="3"></textarea>
+                                            <textarea class="form-control" ng-model="advance.description" rows="3" required></textarea>
                                         </div>
-                                        <div class="col-sm-12 float-right">
-                                            <button type="submit" class="btn btn-primary">
+                                        <div class="col-sm-4">
+                                            <label for="tries">
+                                                Intentos para subir archivos
+                                            </label>
+                                            <input type="number" min="1" ng-min="1" name="tries" class="form-control" ng-model="advance.tries" required>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label for="advanceNumber">
+                                                Avance Número
+                                            </label>
+                                            <input type="number" min="1" ng-min="1" name="advanceNumber" class="form-control" ng-model="advance.advanceNumber" required>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <button type="submit" class="btn btn-primary float-right" style="margin-top: 30px;">
                                                 Solicitar Avance
                                             </button>
                                         </div>
@@ -229,21 +241,27 @@
                                 </form>
                             </div>
                         </div>
-                        <div class="row" ng-repeat="a in advanceList">
-                            <table class="table table-hover">
+                        <div class="row">
+                            <table class="table table-hover" style="margin-top: 30px;">
                                 <thead>
                                     <tr>
                                         <th scope="col" class="align-middle text-center">Nombre del Avance</th>
+                                        <th scope="col" class="align-middle text-center">Descripción</th>
                                         <th scope="col" class="align-middle text-center">Documentos</th>
+                                        <th scope="col" class="align-middle text-center">Feedback</th>
+                                        <th scope="col" class="align-middle text-center">Intentos Restantes</th>
                                         <th scope="col" class="align-middle text-center">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr ng-repeat="s in studyGroup.students">
-                                        <th scope="row" class="align-middle text-center">{{s.name}}</th>
-                                        <td class="align-middle text-center">{{s.email}}</td>
+                                    <tr ng-repeat="a in advanceList">
+                                        <th scope="row" class="align-middle text-center">{{a.title}}</th>
+                                        <td class="align-middle text-center">{{a.description}}</td>
+                                        <td class="align-middle text-center">{{a.files || "No hay documentos aún"}}</td>
+                                        <td class="align-middle text-center">{{a.feedback || "-"}}</td>
+                                        <td class="align-middle text-center">{{a.tries}}</td>
                                         <td class="align-middle text-center">
-                                            <i class="fas fa-minus-circle"></i>
+                                            <a href="#" ng-click="showApproveModal(a.id)" ng-show="!a.status"><i class="far fa-thumbs-up"></i></a>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -254,4 +272,34 @@
             </div>
         </div>
     </div>
+    
+    <!-- Modal -->
+    <form ng-submit="approveAdvance()">
+        <div class="modal fade" id="feedbackAdvanceModal" tabindex="-1" role="dialog" aria-labelledby="feedbackAdvanceModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Cerrar Avance</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <label for="advanceDescription">
+                                    Feedback
+                                </label>
+                                <textarea class="form-control" ng-model="finalAdvance.feedback" rows="3" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Aprobar Avance</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>

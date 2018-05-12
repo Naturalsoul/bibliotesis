@@ -12,10 +12,10 @@ let StudyGroupSchema = new Schema ({
 })
 
 StudyGroupSchema.plugin(autoIncrement.plugin, {
-    model: "StudyGroup",
+    model: "Studygroup",
     field: "id",
     startAt: 0,
     incrementBy: 1
 })
 
-module.exports = db.model("StudyGroup", StudyGroupSchema)
+module.exports = db.model("Studygroup", StudyGroupSchema)

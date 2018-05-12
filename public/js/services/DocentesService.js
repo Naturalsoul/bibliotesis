@@ -44,6 +44,36 @@ angular.module("DocentesService", []).factory("DocentesService", ["$http", funct
                     console.log(err)
                     next([])
                 })
+        },
+        
+        getAdvances: function (studyGroup, next) {
+            $http.post("/api/plataforma/advances", {studyGroup})
+                .then(function (data) {
+                    next(data.data)
+                }, function (err) {
+                    console.log(err.data)
+                    next([])
+                })
+        },
+        
+        requestNewAdvance: function (advance, next) {
+            $http.post("/api/plataforma/advance", {advance})
+                .then(function (data) {
+                    next(data.data)
+                }, function (err) {
+                    console.log(err.data)
+                    next([])
+                })
+        },
+        
+        approveAdvance: function (advance, next) {
+            $http.put("/api/plataforma/advance", {advance})
+                .then(function (data) {
+                    next(data.data)
+                }, function (err) {
+                    console.log(err.data)
+                    next([])
+                })
         }
         
         // ---------------------------------------------------------------------
