@@ -45,7 +45,7 @@ angular.module("AuthCtrl", ["cp.ngConfirm"]).controller("AuthController", ["$sco
                     animation: "zoom",
                     closeAnimation: "zoom",
                     title: "Un solo paso más",
-                    content: "Debe confirmar su correo electrónico y podrá ingresar a la plataforma de Bibliotesis. Gracias por registrarse.",
+                    content: "Debe confirmar su correo electrónico y podrá ingresar a la plataforma de ClouDoc. Gracias por registrarse.",
                     scope: $scope,
                     buttons: {
                         entendido: {

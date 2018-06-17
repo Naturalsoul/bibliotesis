@@ -1,3 +1,23 @@
 .margin-top-15 {
     margin-top: 15px;
 }
+
+.fileIcons {
+    font-size: 30px;
+}
+
+#differenceBox {
+    border-width: 1px;
+    border-style: solid;
+    border-color: black;
+    padding: 10px;
+    margin-top: 30px;
+}
+
+.banner-div {
+    width: 100%;
+}
+
+.banner {
+    width: 100%;
+}

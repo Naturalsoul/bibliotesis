@@ -3,10 +3,38 @@
 const Users       = require("./controllers/users.controller")
 const StudyGroup  = require("./controllers/studyGroup.controller")
 const Advances    = require("./controllers/advances.controller")
+const Tesis       = require("./controllers/tesis.controller")
 
 // ----------------------------
 
+// Dependencies ---------------------
+
+const multer      = require("multer")
+
+// ----------------------------------
+
 module.exports = function (app) {
+    
+    // Multer Config for Files Upload -------------
+    
+    let storage = multer.diskStorage({
+      destination: function (req, file, callback) {
+        callback(null, './uploads/');
+      },
+      filename: function (req, file, callback) {
+        callback(null, file.originalname);
+      }
+    });
+    
+    let upload = multer({ storage : storage }).fields([{
+        name: "docs",
+        maxCount: 4
+    }, {
+        name: "tesis",
+        maxCount: 1
+    }])
+    
+    // --------------------------------------------
     
     // Auth -------------------------------
     
@@ -173,6 +201,154 @@ module.exports = function (app) {
         } else {
             res.json([])
         }
+    })
+    
+    app.post("/api/plataforma/tesis/get", function (req, res) {
+        if (typeof req.session.email != "undefined") {
+            Tesis.get(req.body.studyGroup, function (data) {
+                res.json(data)
+            })
+        } else {
+            res.json([])
+        }
+    })
+    
+    app.post("/api/plataforma/tesis", function (req, res) {
+        if (typeof req.session.email != "undefined") {
+            Tesis.save(req.body.tesis, function (data) {
+                res.json(data)
+            })
+        } else {
+            res.json([])
+        }
+    })
+    
+    app.post("/api/plataforma/tesis/approve", function(req, res) {
+        if (typeof req.session.email != "undefined") {
+            Tesis.approveTesis(req.body.tesis, function (data) {
+                res.json(data)
+            })
+        } else {
+            res.json([])
+        }
+    })
+    
+    app.get("/api/plataforma/tesis/allByScore", function(req, res) {
+        if (typeof req.session.email != "undefined") {
+            Tesis.getAllByScore(function (data) {
+                res.json(data)
+            })
+        } else {
+            res.json([])
+        }
+    })
+    
+    app.post("/api/plataforma/tesis/showInRepository", function (req, res) {
+        if (typeof req.session.email != "undefined") {
+            Tesis.showTesisInRepository(req.body.id, function (data) {
+                res.json(data)
+            })
+        } else {
+            res.json([])
+        }
+    })
+    
+    app.post("/api/plataforma/tesis/removeFromRepository", function (req, res) {
+        if (typeof req.session.email != "undefined") {
+            Tesis.removeFromRepository(req.body.id, function (data) {
+                res.json(data)
+            })
+        } else {
+            res.json([])
+        }
+    })
+    
+    app.get("/api/plataforma/tesis/getByFlag", function (req, res) {
+        Tesis.getAllByFlag(function (data) {
+            res.json(data)
+        })
+    })
+    
+    // Alumnos -----------------------------------------------------------------
+    
+    app.get("/api/plataforma/alumnos/studygroup", function (req, res) {
+        if (typeof req.session.email != "undefined") {
+            Users.getStudyGroup(req.session.email, function (data) {
+                res.json(data)
+            })
+        } else {
+            res.json([])
+        }
+    })
+    
+    app.post("/api/plataforma/alumnos/advances", function (req, res) {
+        if (typeof req.session.email != "undefined") {
+            Advances.getAdvancesByStudyGroup(req.body.studyGroup, function (data) {
+                res.json(data)
+            })
+        } else {
+            res.json([])
+        }
+    })
+    
+    app.post("/api/plataforma/alumnos/advances/up", function (req, res) {
+        if (typeof req.session.email != "undefined") {
+            upload(req, res, function (err) {
+                if (err) throw err
+                
+                Advances.updateFiles(req.body, req.files, function (data) {
+                    res.json(data)
+                })
+            })
+        } else {
+            res.json([])
+        }
+    })
+    
+    app.get("/api/plataforma/alumnos/advances/file", function (req, res) {
+        if (typeof req.session.email != "undefined") {
+            Advances.getFile(req.query, function (file) {
+                res.download(file, function (err) {
+                    if (err) throw err
+                })
+            })
+        } else {
+            res.json([])
+        }
+    })
+    
+    app.post("/api/plataforma/advance/diffs", function (req, res) {
+        if (typeof req.session.email != "undefined") {
+            Advances.lookForDifferences(req.body.actualFile, req.body.advance, function (data) {
+                res.json(data)
+            })
+        } else {
+            res.json([])
+        }
+    })
+    
+    app.post('/api/plataforma/alumnos/tesis/up', function (req, res) {
+        if (typeof req.session.email != "undefined") {
+            upload(req, res, function (err) {
+                if (err) throw err
+                
+                Tesis.uploadFile(req.body.id, req.body, req.files, function (data) {
+                    res.json(data)
+                })
+            })
+        } else {
+            res.json([])
+        }
+    })
+    
+    // -------------------------------------------------------------------------------------------
+    
+    app.post("/plataforma/tesis/file", function (req, res) {
+        Tesis.getTesis(req.body.path, function (file) {
+            res.setHeader("Content-Disposition", "inline; filename=" + req.body.filename.replace(/\s/g, "_"))
+            res.setHeader("Transfer-Encoding", "chunked")
+            file.pipe(res)
+        })
     })
     
     // For AngularJS routing ------------

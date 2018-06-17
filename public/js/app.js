@@ -7,9 +7,13 @@ angular.module("bibliotesis", [
     "EmailVerificationCtrl",
     "AccountCtrl",
     "DocentesCtrl",
+    "AlumnosCtrl",
+    "TesisCtrl",
     "AuthService",
     "AccountService",
-    "DocentesService"
+    "DocentesService",
+    "AlumnosService",
+    "TesisService"
 ])
 
 

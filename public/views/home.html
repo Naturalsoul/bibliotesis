@@ -1,10 +1,88 @@
 <div class="container">
     <div class="row">
-        <div class="col-sm-12 col-md-10">
-            Aquí van las tesis
-        </div>
-        <div class="col-sm-12 col-md-2">
-            ¿Categorías?
+        <div class="col-sm-4">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="search-addon">
+                        <i class="fas fa-search"></i>
+                    </span>
+                </div>
+                <input type="text" class="form-control muli" ng-model="searchKeyword" placeholder="Buscar una Tesis" aria-label="Buscar una Tesis" aria-describedby="search-addon">
+            </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="table table-hover">
+                <thead>
+                    <th class="align-middle text-center">
+                        Titulo
+                    </th>
+                    <th class="align-middle text-center">
+                        Palabras Clave
+                    </th>
+                    <th class="align-middle text-center">
+                        
+                    </th>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="t in tesisList | filter: searchKeyword track by t.id">
+                        <th class="align-middle text-center">
+                            {{t.title}}
+                        </th>
+                        <td class="align-middle text-center" style="display: none;">
+                            {{t.abstract}}
+                        </td>
+                        <td class="align-middle text-center">
+                            {{t.keywords.join(", ")}}
+                        </td>
+                        <td class="align-middle text-center">
+                            <a href="#" ng-click="setTesisInfo(t)" data-toggle="modal" data-target="#seeTesisModal" title="Ver Tesis" style="font-size: 30px;">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="seeTesisModal" tabindex="-1" role="dialog" aria-labelledby="seeTesisModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">{{tesis.title}}</h5>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <div class="col-sm-12 text-center align-middle">
+                <a href="#" ng-click="showFile(tesis.files.path, tesis.files.filename)" style="font-size: 50px;">
+                    <i class="far fa-file-pdf"></i>
+                </a>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 30px;">
+            <div class="col-sm-12">
+                <strong>
+                    Abstract
+                </strong>
+            </div>
+            <div class="col-sm-12">
+                {{tesis.abstract}}
+            </div>
+        </div>
+        <div class="row" style="margin-top: 30px; margin-bottom: 30px;">
+            <div class="col-sm-12">
+                <strong>Palabras Claves</strong>
+            </div>
+            <div class="col-sm-12">
+                {{tesis.keywords.join(", ")}}
+            </div>
+        </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
 </div>

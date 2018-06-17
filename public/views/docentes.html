@@ -12,7 +12,7 @@
                     <a class="nav-link" href="#" ng-model="showForms" ng-click="showForms = 3">Avances</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link disabled" href="#">Disabled</a>
+                    <a class="nav-link" href="#" ng-model="showForms" ng-click="showForms = 4">Tesis</a>
                 </li>
             </ul>
         </div>
@@ -187,7 +187,7 @@
                                     Grupo de Estudio
                                 </label>
                                 <select ng-model="advance.studyGroup" class="form-control" ng-change="showAdvanceInputs()">
-                                    <option ng-repeat="s in studyGroupList" value="s.name">
+                                    <option ng-repeat="s in studyGroupList" value="{{s.name}}">
                                         {{s.name}}
                                     </option>
                                 </select>
@@ -250,6 +250,7 @@
                                         <th scope="col" class="align-middle text-center">Documentos</th>
                                         <th scope="col" class="align-middle text-center">Feedback</th>
                                         <th scope="col" class="align-middle text-center">Intentos Restantes</th>
+                                        <th scope="col" class="align-middle text-center">Estado</th>
                                         <th scope="col" class="align-middle text-center">Acciones</th>
                                     </tr>
                                 </thead>
@@ -257,16 +258,134 @@
                                     <tr ng-repeat="a in advanceList">
                                         <th scope="row" class="align-middle text-center">{{a.title}}</th>
                                         <td class="align-middle text-center">{{a.description}}</td>
-                                        <td class="align-middle text-center">{{a.files || "No hay documentos aún"}}</td>
+                                        <td class="align-middle text-center">
+                                            <a href="#" ng-click="downloadFile(a.files.docs[0])" ng-show="a.files" class="fileIcons">
+                                                <i class="far fa-file-pdf"></i>
+                                            </a>
+                                            <p ng-show="!a.files">
+                                                No hay documentos aún
+                                            </p>
+                                        </td>
                                         <td class="align-middle text-center">{{a.feedback || "-"}}</td>
                                         <td class="align-middle text-center">{{a.tries}}</td>
                                         <td class="align-middle text-center">
+                                            <button type="button" class="btn btn-warning" disabled ng-show="!a.status">
+                                                Avance Abierto
+                                            </button>
+                                            <button type="button" class="btn btn-success" disabled ng-show="a.status">
+                                                Avance Cerrado
+                                            </button>
+                                        </td>
+                                        <td class="align-middle text-center">
                                             <a href="#" ng-click="showApproveModal(a.id)" ng-show="!a.status"><i class="far fa-thumbs-up"></i></a>
+                                            <a href="#" ng-click="setFileToLookForDiffs(a.files.docs[0])" data-toggle="modal" data-target="#showDifferenceModal"><i class="fas fa-search"></i></a>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" ng-show="showForms == 4">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    Tesis
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="name">
+                                    Grupo de Estudio
+                                </label>
+                                <select ng-model="tesis.studyGroup" class="form-control" ng-change="getTesisInfo()">
+                                    <option ng-repeat="s in studyGroupList" value="{{s.name}}">
+                                        {{s.name}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <button type="button" class="btn btn-primary" ng-click="showTesisForm()">
+                                Solicitar Tesis
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row" ng-show="requestTesisFlag" style="margin-top: 15px;">
+                        <div class="col-sm-12">
+                            <form ng-submit="requestTesis()">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <label for="limitDate">
+                                            Fecha Límite
+                                        </label>
+                                        <input type="date" class="form-control" name="limitDate" ng-model="tesis.date" required>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <button type="submit" class="btn btn-primary float-right" style="margin-top: 30px;">
+                                            Solicitar
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <table class="table table-hover" style="margin-top: 30px;">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="align-middle text-center">Grupo de Estudio</th>
+                                    <th scope="col" class="align-middle text-center">Titulo de Tesis</th>
+                                    <th scope="col" class="align-middle text-center">Fecha Límite</th>
+                                    <th scope="col" class="align-middle text-center">Documentos</th>
+                                    <th scope="col" class="align-middle text-center">Detalles</th>
+                                    <th scope="col" class="align-middle text-center">Nota</th>
+                                    <th scope="col" class="align-middle text-center">Estado</th>
+                                    <th scope="col" class="align-middle text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="t in tesisList">
+                                    <th scope="row" class="align-middle text-center">{{t.studyGroup}}</th>
+                                    <td class="align-middle text-center">{{t.title || "-"}}</td>
+                                    <td class="align-middle text-center">{{t.date | date: "dd/MM/yyyy"}}</td>
+                                    <td class="align-middle text-center">
+                                        <a href="#" ng-click="downloadFile(t.files)" ng-show="t.files" class="fileIcons">
+                                            <i class="far fa-file-pdf"></i>
+                                        </a>
+                                        <p ng-show="!t.files">
+                                            No hay documentos aún
+                                        </p>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <button type="button" class="btn btn-primary" ng-click="seeTesisDetails(t)" ng-show="t.abstract" data-toggle="modal" data-target="#seeTesisDetailsModal" title="Abstract y Palabras Clave">
+                                            Ver más detalles
+                                        </button>
+                                        <span ng-show="!t.abstract">
+                                            -
+                                        </span>
+                                    </td>
+                                    <td class="align-middle text-center">{{(t.score == 1 && !t.status) ? "-" : t.score}}</td>
+                                    <td class="align-middle text-center">
+                                        <button type="button" class="btn btn-warning" disabled ng-show="!t.status">
+                                            Tesis Abierta
+                                        </button>
+                                        <button type="button" class="btn btn-success" disabled ng-show="t.status">
+                                            Tesis Cerrada
+                                        </button>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <a href="#" ng-click="showApproveTesisModal(t.id)" ng-show="!t.status"><i class="far fa-thumbs-up"></i></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -302,4 +421,108 @@
             </div>
         </div>
     </form>
+    
+    <div class="modal fade" id="showDifferenceModal" tabindex="-1" role="dialog" aria-labelledby="showDifferenceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ver diferencias</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <label for="fileToCheckDifferences">
+                                Comparar con el siguiente avance
+                            </label>
+                            <select class="form-control" ng-model="difference.advance">
+                                <option ng-repeat="a in advanceList" value="{{a.id}}">{{a.title}}</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4">
+                            <button type="button" class="btn btn-primary" ng-click="doComparison()" style="margin-top: 30px;" ng-disabled="lookingForDifferences">
+                                <span ng-show="!lookingForDifferences">Comparar Documentos</span>
+                                <span ng-show="lookingForDifferences"><i class='fa fa-spinner fa-spin'></i> Comparando Documentos</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row" ng-show="showComparisonText">
+                        <div class="col-sm-12">
+                            <div id="differenceBox"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal -->
+    <form ng-submit="approveTesis()">
+        <div class="modal fade" id="approveTesisModal" tabindex="-1" role="dialog" aria-labelledby="approveTesisModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Cerrar Tesis</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <label for="score">
+                                    Nota
+                                </label>
+                                <input type="number" step="0.1" min="1" ng-min="1" name="score" class="form-control" ng-model="finalTesis.score" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Cerrar Tesis</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    
+    <div class="modal fade" id="seeTesisDetailsModal" tabindex="-1" role="dialog" aria-labelledby="seeTesisDetailsModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Detalles de Tesis</h5>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+                <div class="col-sm-12">
+                    <strong>Abstract</strong>
+                </div>
+                <div class="col-sm-12">
+                    {{tesisDetails.abstract}}
+                </div>
+            </div>
+            <div class="row" style="margin-top: 30px;">
+                <div class="col-sm-12">
+                    <strong>Palabras Claves</strong>
+                </div>
+                <div class="col-sm-12">
+                    <ul>
+                        <li ng-repeat="k in tesisDetails.keywords">
+                            {{k}}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
 </div>

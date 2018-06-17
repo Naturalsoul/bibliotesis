@@ -4,7 +4,7 @@ angular.module("EmailVerificationCtrl", []).controller("EmailVerificationControl
         hash: $routeParams.hash
     }
     
-    $scope.verificationStatus = "No Verificado. Ha ocurrido un problema al verificar tu cuenta. Por favor, ponte en contacto con el equipo de Bibliotesis para resolver dudas."
+    $scope.verificationStatus = "No Verificado. Ha ocurrido un problema al verificar tu cuenta. Por favor, ponte en contacto con el equipo de ClouDoc para resolver dudas."
 
     AuthService.verificateEmail($scope.userData, function (res) {
         if (res.message) {

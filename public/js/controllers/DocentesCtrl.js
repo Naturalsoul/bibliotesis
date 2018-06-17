@@ -1,4 +1,4 @@
-angular.module("DocentesCtrl", ["cp.ngConfirm"]).controller("DocentesController", ["$scope", "$ngConfirm", "$location", "$route", "AccountService", "DocentesService", function ($scope, $ngConfirm, $location, $route, AccountService, DocentesService) {
+angular.module("DocentesCtrl", ["cp.ngConfirm"]).controller("DocentesController", ["$scope", "$ngConfirm", "$location", "$route", "$window", "AccountService", "DocentesService", function ($scope, $ngConfirm, $location, $route, $window, AccountService, DocentesService) {
     
     // Variables ---------------------------------------------------------------
     
@@ -38,6 +38,32 @@ angular.module("DocentesCtrl", ["cp.ngConfirm"]).controller("DocentesController"
     $scope.finalAdvance = {
         id: 0,
         feedback: ""
+    }
+    
+    $scope.difference = {
+        file: {},
+        advance: "",
+        title1: "",
+        text1: "",
+        title2: "",
+        text2: ""
+    }
+    
+    $scope.showComparisonText = false
+    $scope.lookingForDifferences = false
+    
+    $scope.tesis = {
+        studyGroup: "",
+        title: "",
+        description: "",
+        date: ""
+    }
+    
+    $scope.tesisList = []
+    
+    $scope.finalTesis = {
+        id: 0,
+        score: 1
     }
     
     // -------------------------------------------------------------------------
@@ -386,6 +412,195 @@ angular.module("DocentesCtrl", ["cp.ngConfirm"]).controller("DocentesController"
                 }
             })
         }, 400)
+    }
+    
+    $scope.downloadFile = function (file) {
+        $window.open("/api/plataforma/alumnos/advances/file?path=" + file.path, "_self")
+    }
+    
+    $scope.setFileToLookForDiffs = function (file) {
+        $scope.difference.file = file
+        $scope.showComparisonText = false
+    }
+    
+    $scope.doComparison = function () {
+        $scope.lookingForDifferences = true
+        
+        if ($scope.difference.advance != "") {
+            DocentesService.lookForDifferences($scope.difference.file, $scope.difference.advance, function (res) {
+                
+                if (res.length > 0) {
+                    let file1 = res.file1
+                    let file2 = res.file2
+                    let color = ""
+                    let span = null
+                    
+                    let diff = JsDiff.diffChars(file1, file2),
+                        display = document.getElementById('differenceBox'),
+                        fragment = document.createDocumentFragment();
+                    
+                    display.innerHTML = ""
+                    
+                    diff.forEach(function(part){
+                      // green for additions, red for deletions
+                      // grey for common parts
+                      color = part.added ? 'green' :
+                        part.removed ? 'red' : 'grey';
+                      span = document.createElement('span');
+                      span.style.color = color;
+                      span.style.fontWeight = (color == "grey") ? "normal" : "bold";
+                      span.appendChild(document
+                        .createTextNode(part.value));
+                      fragment.appendChild(span);
+                    });
+                    
+                    display.appendChild(fragment);
+                    
+                    $scope.lookingForDifferences = false
+                    $scope.showComparisonText = true
+                } else {
+                    $scope.lookingForDifferences = false
+                    $ngConfirm({
+                        theme: "bootstrap",
+                        animation: "zoom",
+                        closeAnimation: "zoom",
+                        title: "Ocurrió un error",
+                        content: "No hay documentos en uno o ambos avances.",
+                        scope: $scope,
+                        buttons: {
+                            entendido: {
+                                text: "Entendido",
+                                btnClass: "btn-primary",
+                                action: function (scope, button) {
+                                    
+                                }
+                            }
+                        }
+                    })
+                }
+            })
+        }
+    }
+    
+    // -------------------------------------------------------------------------
+    
+    // Tesis -------------------------------------------------------------------
+    
+    $scope.showTesisForm = function () {
+        $scope.requestTesisFlag = true
+    }
+    
+    $scope.getTesisInfo = function () {
+        DocentesService.getTesisInfo($scope.tesis.studyGroup, function (res) {
+            $scope.tesisList = res
+        })
+    }
+    
+    $scope.requestTesis = function () {
+        DocentesService.requestTesis($scope.tesis, function (res) {
+            if (res.saved) {
+                $route.reload()
+                    
+                $scope.showForms = 4
+                
+                $ngConfirm({
+                    theme: "bootstrap",
+                    animation: "zoom",
+                    closeAnimation: "zoom",
+                    title: "Tesis Solicitada",
+                    content: "Se ha solicitado la tesis al grupo de estudio correspondiente.",
+                    scope: $scope,
+                    buttons: {
+                        entendido: {
+                            text: "Entendido",
+                            btnClass: "btn-primary",
+                            action: function (scope, button) {
+                            }
+                        }
+                    }
+                })
+            } else {
+                $ngConfirm({
+                    theme: "bootstrap",
+                    animation: "zoom",
+                    closeAnimation: "zoom",
+                    title: "Ocurrió un error",
+                    content: "Vuelva a intentarlo más tarde.",
+                    scope: $scope,
+                    buttons: {
+                        entendido: {
+                            text: "Entendido",
+                            btnClass: "btn-primary",
+                            action: function (scope, button) {
+                                
+                            }
+                        }
+                    }
+                })
+            }
+        })
+    }
+    
+    $scope.showApproveTesisModal = function (id) {
+        $scope.finalTesis.id = id
+        $("#approveTesisModal").modal()
+    }
+    
+    $scope.approveTesis = function () {
+        $("#approveTesisModal").modal("toggle")
+        
+        setTimeout(function () {
+            DocentesService.approveTesis($scope.finalTesis, function (res) {
+                if (res.approved) {
+                    $route.reload()
+                    
+                    $scope.showForms = 4
+                    
+                    $ngConfirm({
+                        theme: "bootstrap",
+                        animation: "zoom",
+                        closeAnimation: "zoom",
+                        title: "Tesis Cerrada",
+                        content: "Se ha cerrado la tesis del grupo de estudio correspondiente.",
+                        scope: $scope,
+                        buttons: {
+                            entendido: {
+                                text: "Entendido",
+                                btnClass: "btn-primary",
+                                action: function (scope, button) {
+                                }
+                            }
+                        }
+                    })
+                    
+                } else {
+                    $ngConfirm({
+                        theme: "bootstrap",
+                        animation: "zoom",
+                        closeAnimation: "zoom",
+                        title: "Ocurrió un error",
+                        content: "Vuelva a intentarlo más tarde.",
+                        scope: $scope,
+                        buttons: {
+                            entendido: {
+                                text: "Entendido",
+                                btnClass: "btn-primary",
+                                action: function (scope, button) {
+                                    
+                                }
+                            }
+                        }
+                    })
+                }
+            })
+        }, 400)
+    }
+    
+    $scope.seeTesisDetails = function (tesis) {
+        $scope.tesisDetails = {
+            abstract: tesis.abstract,
+            keywords: tesis.keywords
+        }
     }
     
     // -------------------------------------------------------------------------

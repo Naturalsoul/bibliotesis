@@ -1,0 +1,92 @@
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <h5 class="card-header">
+                    Listado de Tesis para mostrar en el Repositorio
+                </h5>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="align-middle text-center">Título de Tesis</th>
+                                        <th scope="col" class="align-middle text-center">Documentos</th>
+                                        <th scope="col" class="align-middle text-center">Detalles</th>
+                                        <th scope="col" class="align-middle text-center">Nota</th>
+                                        <th scope="col" class="align-middle text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="t in tesisList">
+                                        <th scope="row" class="align-middle text-center">{{t.title || "-"}}</th>
+                                        <td class="align-middle text-center">
+                                            <a href="#" ng-click="downloadFile(t.files)" ng-show="t.files" class="fileIcons">
+                                                <i class="far fa-file-pdf"></i>
+                                            </a>
+                                            <p ng-show="!t.files">
+                                                No hay documentos aún
+                                            </p>
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <button type="button" class="btn btn-primary" ng-click="seeTesisDetails(t)" data-toggle="modal" data-target="#seeTesisDetailsModal" title="Abstract y Palabras Clave">
+                                                Ver más detalles
+                                            </button>
+                                            <span ng-show="!t.abstract">
+                                                -
+                                            </span>
+                                        </td>
+                                        <td class="align-middle text-center">{{t.score}}</td>
+                                        <td class="align-middle text-center">
+                                            <a href="#" ng-click="approveTesis(t.id)" title="Aprobar Tesis" ng-show="!t.showInRepository">
+                                                <i class="far fa-thumbs-up"></i>
+                                            </a>
+                                            <a href="#" ng-click="removeTesis(t.id)" title="Remover Tesis" ng-show="t.showInRepository">
+                                                <i class="fas fa-times"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="seeTesisDetailsModal" tabindex="-1" role="dialog" aria-labelledby="seeTesisDetailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Detalles de Tesis</h5>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <div class="col-sm-12">
+                <strong>Abstract</strong>
+            </div>
+            <div class="col-sm-12">
+                {{tesisDetails.abstract}}
+            </div>
+        </div>
+        <div class="row" style="margin-top: 30px;">
+            <div class="col-sm-12">
+                <strong>Palabras Claves</strong>
+            </div>
+            <div class="col-sm-12">
+                <ul>
+                    <li ng-repeat="k in tesisDetails.keywords">
+                        {{k}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

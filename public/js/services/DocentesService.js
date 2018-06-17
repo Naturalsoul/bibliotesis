@@ -46,6 +46,8 @@ angular.module("DocentesService", []).factory("DocentesService", ["$http", funct
                 })
         },
         
+        // Avances -------------------------------------------------------------
+        
         getAdvances: function (studyGroup, next) {
             $http.post("/api/plataforma/advances", {studyGroup})
                 .then(function (data) {
@@ -68,6 +70,46 @@ angular.module("DocentesService", []).factory("DocentesService", ["$http", funct
         
         approveAdvance: function (advance, next) {
             $http.put("/api/plataforma/advance", {advance})
+                .then(function (data) {
+                    next(data.data)
+                }, function (err) {
+                    console.log(err.data)
+                    next([])
+                })
+        },
+        
+        lookForDifferences: function (actualFile, advance, next) {
+            $http.post("/api/plataforma/advance/diffs", {actualFile, advance})
+                .then(function (data) {
+                    next(data.data)
+                }, function (err) {
+                    console.log(err.data)
+                    next([])
+                })
+        },
+        
+        getTesisInfo: function (studyGroup, next) {
+            $http.post("/api/plataforma/tesis/get", {studyGroup})
+                .then(function (data) {
+                    next(data.data)
+                }, function(err) {
+                    console.log(err.data)
+                    next([])
+                })
+        },
+        
+        requestTesis: function (tesis, next) {
+            $http.post("/api/plataforma/tesis", {tesis})
+                .then(function (data) {
+                    next(data.data)
+                }, function (err) {
+                    console.log(err.data)
+                    next([])
+                })
+        },
+        
+        approveTesis: function (tesis, next) {
+            $http.post("/api/plataforma/tesis/approve", {tesis})
                 .then(function (data) {
                     next(data.data)
                 }, function (err) {

@@ -100,6 +100,21 @@ module.exports = {
         })
     },
     
+    getStudyGroup: function (email, next) {
+        Users.findOne({email}, "tesisGroup", function (err, data) {
+            if (err) throw err
+            
+            if (data != null) {
+                StudyGroup.findOne({name: data.tesisGroup}, function (err, data) {
+                    if (err) throw err
+                    
+                    if (data != null) next(data)
+                    else next([])
+                })
+            } else next([])
+        })
+    },
+    
     changeAccountType: function (email, accountType, next) {
         Users.update({email}, {
             $set: {
@@ -128,7 +143,7 @@ module.exports = {
                         name: account.name,
                         email: account.email,
                         password: hash,
-                        accountType: account.accountType,
+                        student: account.accountType,
                         tesisGroup: (account.studyGroup) ? account.studyGroup : "",
                         status: true,
                         changePassword: true
@@ -223,7 +238,7 @@ module.exports = {
                                 } else next({registered: false})
                             })
                         } else {
-                            let nStudyGroup = StudyGroup ({
+                            let nStudyGroup = new StudyGroup ({
                                 name: student.studyGroup,
                                 students: [{
                                     name: student.name,
@@ -248,11 +263,11 @@ module.exports = {
                         });
                         
                         let mailOptions = {
-                            from: '"Bibliotesis" <noreplydeveloping@gmail.com>', // sender address
+                            from: '"ClouDoc" <noreplydeveloping@gmail.com>', // sender address
                             to: student.email, // list of receivers
-                            subject: 'Activa tu cuenta en Bibliotesis', // Subject line
+                            subject: 'Activa tu cuenta en ClouDoc', // Subject line
                             generateTextFromHTML: true,
-                            html: '<h2>Se ha creado una cuenta para ti en Bibliotesis</h2><br /><p>Ya puedes ingresar a la plataforma de Bibliotesis con las siguientes credenciales:</p><br /><ul><li>Email: ' + student.email + '</li><li>Contraseña: ' + student.password + '</li></ul>' // html body
+                            html: '<h2>Se ha creado una cuenta para ti en ClouDoc</h2><br /><p>Ya puedes ingresar a la plataforma de ClouDoc con las siguientes credenciales:</p><br /><ul><li>Email: ' + student.email + '</li><li>Contraseña: ' + student.password + '</li></ul>' // html body
                         };
                         
                         smtpTransport.sendMail(mailOptions, function(error, response) {

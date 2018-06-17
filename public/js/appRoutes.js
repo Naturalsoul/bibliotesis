@@ -5,7 +5,7 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', f
         // home page
         .when('/', {
             templateUrl: 'views/home.html',
-            controller: 'HomeController'
+            controller: 'MainController'
         })
         
         .when("/login", {
@@ -19,7 +19,7 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', f
         })
         
         .when("/plataforma", {
-            templateUrl: "views/plataforma.html",
+            templateUrl: "views/home.html",
             controller: "MainController"
         })
         
@@ -31,6 +31,16 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', f
         .when("/plataforma/docentes", {
             templateUrl: "views/docentes.html",
             controller: "DocentesController"
+        })
+        
+        .when("/plataforma/alumnos", {
+            templateUrl: "views/alumnos.html",
+            controller: "AlumnosController"
+        })
+        
+        .when("/plataforma/tesis", {
+            templateUrl: "views/tesis.html",
+            controller: "TesisController"
         })
         
         .otherwise({
