@@ -24,7 +24,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script src="libs/angular-confirm/dist/angular-confirm.min.js"></script>
+    <script src="libs/chart.js/dist/Chart.min.js"></script>
+    <script src="libs/angular-chart.js/dist/angular-chart.min.js"></script>
     <script src="libs/jsdiff/diff.min.js"></script>
+    <script src="libs/moment/moment.js"></script>
+    <script src="libs/moment-timezone/moment-timezone.js"></script>
     <script type="text/javascript">
         $.fn.extend({
             animateCss: function (animationName, callback) {
@@ -39,6 +43,10 @@
             }
         });
     </script>
+    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment-with-locales.js"></script>
+    <script src="//cdn.rawgit.com/indrimuska/angular-moment-picker/master/dist/angular-moment-picker.min.js"></script>
+    <link href="//cdn.rawgit.com/indrimuska/angular-moment-picker/master/dist/angular-moment-picker.min.css" rel="stylesheet">
 
     <!-- ANGULAR CUSTOM -->
     <script src="js/controllers/MainCtrl.js"></script>
@@ -57,7 +65,7 @@
     <script src="js/appRoutes.js"></script>
     <script src="js/app.js"></script>
 </head>
-<body ng-app="bibliotesis" ng-controller="MainController">
+<body ng-app="bibliotesis" ng-controller="HomeController">
 <div>
   
   <div class="banner-div">
@@ -72,20 +80,25 @@
     
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto">
+          <li class="nav-item" ng-show="isLoggedIn">
+            <span class="nav-link font-weight-bold font-italic">
+              {{userName || email}} - {{isStudentOrTeacher}}
+            </span>
+          </li>
           <li class="nav-item active">
             <a class="nav-link" href="/">Inicio <span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/plataforma/alumnos" ng-show="isLoggedIn && student">Alumnos</a>
+            <a class="nav-link" href="/plataforma/alumnos" ng-show="isLoggedIn && student && !admin">Alumnos</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/plataforma/docentes" ng-show="isLoggedIn && !student || isLoggedIn && admin">Docentes</a>
+            <a class="nav-link" href="/plataforma/docentes" ng-show="isLoggedIn && !student">Docentes</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/plataforma/cuenta" ng-show="isLoggedIn && admin">Cuentas</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/plataforma/tesis" ng-show="isLoggedIn && admin">Tesis</a>
+            <a class="nav-link" href="/plataforma/tesis" ng-show="isLoggedIn && !student">Tesis</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/login" ng-show="!isLoggedIn">Login</a>

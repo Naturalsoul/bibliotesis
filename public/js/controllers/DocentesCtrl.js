@@ -1,4 +1,4 @@
-angular.module("DocentesCtrl", ["cp.ngConfirm"]).controller("DocentesController", ["$scope", "$ngConfirm", "$location", "$route", "$window", "AccountService", "DocentesService", function ($scope, $ngConfirm, $location, $route, $window, AccountService, DocentesService) {
+angular.module("DocentesCtrl", ["cp.ngConfirm", 'moment-picker']).controller("DocentesController", ["$scope", "$ngConfirm", "$location", "$route", "$window", "AccountService", "DocentesService", function ($scope, $ngConfirm, $location, $route, $window, AccountService, DocentesService) {
     
     // Variables ---------------------------------------------------------------
     
@@ -7,8 +7,8 @@ angular.module("DocentesCtrl", ["cp.ngConfirm"]).controller("DocentesController"
     $scope.nStudent = {
         name: "",
         email: "",
-        password: "",
-        studyGroup: ""
+        studyGroup: "",
+        section: ""
     }
     
     $scope.studyGroupList = []
@@ -16,7 +16,8 @@ angular.module("DocentesCtrl", ["cp.ngConfirm"]).controller("DocentesController"
     $scope.studyGroup = {
         name: "",
         theme: "",
-        students: []
+        students: [],
+        section: ""
     }
     
     $scope.studentList = []
@@ -28,9 +29,8 @@ angular.module("DocentesCtrl", ["cp.ngConfirm"]).controller("DocentesController"
     
     $scope.advance = {
         studyGroup: "",
-        title: "",
         description: "",
-        tries: 1
+        date: ""
     }
     
     $scope.advanceList = []
@@ -66,6 +66,146 @@ angular.module("DocentesCtrl", ["cp.ngConfirm"]).controller("DocentesController"
         score: 1
     }
     
+    $scope.nSection = {
+        code: "",
+        teacher: {
+            name: "",
+            email: "",
+            level: 0,
+        }
+    }
+    
+    $scope.sectionsList = []
+    
+    // -------------------------------------------------------------------------
+    
+    // Secciones ---------------------------------------------------------------
+    
+    DocentesService.getTeacherInfo(function (res) {
+        $scope.nSection.teacher = {
+            name: res.name,
+            email: res.email,
+            level: res.level
+        }
+    })
+    
+    DocentesService.getSectionsList(function (res) {
+        $scope.sectionsList = res
+    })
+    
+    $scope.addNewSection = function () {
+        DocentesService.addNewSection($scope.nSection, function (res) {
+            if (res.saved) {
+                $route.reload()
+                
+                $scope.showForms = 1
+                
+                $ngConfirm({
+                    theme: "bootstrap",
+                    animation: "zoom",
+                    closeAnimation: "zoom",
+                    title: "Sección Registrada",
+                    content: "Se ha registrado la nueva sección.",
+                    scope: $scope,
+                    buttons: {
+                        entendido: {
+                            text: "Entendido",
+                            btnClass: "btn-primary",
+                            action: function (scope, button) {
+                                
+                            }
+                        }
+                    }
+                })
+            } else {
+                $ngConfirm({
+                    theme: "bootstrap",
+                    animation: "zoom",
+                    closeAnimation: "zoom",
+                    title: "Ocurrió un error",
+                    content: (res.message) ? res.message : "Vuelva a intentarlo más tarde.",
+                    scope: $scope,
+                    buttons: {
+                        entendido: {
+                            text: "Entendido",
+                            btnClass: "btn-primary",
+                            action: function (scope, button) {
+                                
+                            }
+                        }
+                    }
+                })
+            }
+        })
+    }
+    
+    $scope.removeSection = function (code) {
+        $ngConfirm({
+            theme: "bootstrap",
+            animation: "zoom",
+            closeAnimation: "zoom",
+            title: "¿Está seguro de eliminar la sección?",
+            content: "Esta acción es irreversible.",
+            scope: $scope,
+            buttons: {
+                si: {
+                    text: "Sí",
+                    btnClass: "btn-danger",
+                    action: function (scope, button) {
+                        DocentesService.removeSection(code, function (res) {
+                            if (res.removed) {
+                                $route.reload()
+                
+                                $scope.showForms = 1
+                                
+                                $ngConfirm({
+                                    theme: "bootstrap",
+                                    animation: "zoom",
+                                    closeAnimation: "zoom",
+                                    title: "Sección Eliminada",
+                                    content: "Se ha eliminado la sección.",
+                                    scope: $scope,
+                                    buttons: {
+                                        entendido: {
+                                            text: "Entendido",
+                                            btnClass: "btn-primary",
+                                            action: function (scope, button) {
+                                                
+                                            }
+                                        }
+                                    }
+                                })
+                            } else {
+                                $ngConfirm({
+                                    theme: "bootstrap",
+                                    animation: "zoom",
+                                    closeAnimation: "zoom",
+                                    title: "Ocurrió un error",
+                                    content: "Vuelva a intentarlo más tarde.",
+                                    scope: $scope,
+                                    buttons: {
+                                        entendido: {
+                                            text: "Entendido",
+                                            btnClass: "btn-primary",
+                                            action: function (scope, button) {
+                                                
+                                            }
+                                        }
+                                    }
+                                })
+                            }
+                        })
+                    }
+                },
+                no: {
+                    text: "No",
+                    btnClass: "btn-default",
+                    action: function () {}
+                }
+            }
+        })
+    }
+    
     // -------------------------------------------------------------------------
     
     // Añadir Alumnos ----------------------------------------------------------
@@ -82,7 +222,7 @@ angular.module("DocentesCtrl", ["cp.ngConfirm"]).controller("DocentesController"
                     animation: "zoom",
                     closeAnimation: "zoom",
                     title: "Alumno Añadido",
-                    content: "Se ha registrado el nuevo alumno y registrado el nuevo grupo de estudio o añadido a este último.",
+                    content: "Se ha registrado el nuevo alumno y enviado un correo electrónico con sus credenciales y registrado el nuevo grupo de estudio o añadido a este último.",
                     scope: $scope,
                     buttons: {
                         entendido: {
@@ -120,9 +260,12 @@ angular.module("DocentesCtrl", ["cp.ngConfirm"]).controller("DocentesController"
     
     // Grupos de Estudio -------------------------------------------------------
     
-    DocentesService.getStudyGroups(function (res) {
-        $scope.studyGroupList = res
-    })
+    $scope.getStudyGroupsBySection = function () {
+        DocentesService.getStudyGroups($scope.studyGroup.section, function (res) {
+            $scope.studyGroupList = res
+            $scope.showStudyGroupsFlag = true
+        })
+    }
     
     $scope.showStudyGroupInputs = function () {
         for (let sg of $scope.studyGroupList) {
@@ -132,8 +275,8 @@ angular.module("DocentesCtrl", ["cp.ngConfirm"]).controller("DocentesController"
             }
         }
         
-        DocentesService.getStudentList(function (res) {
-            $scope.studentList = res
+        DocentesService.getStudentList($scope.studyGroup.section, function (res) {
+            $scope.studentList = res.filter(e => e.level != 0)
         })
         
         $scope.showStudyGroupInputsFlag = true
@@ -297,6 +440,73 @@ angular.module("DocentesCtrl", ["cp.ngConfirm"]).controller("DocentesController"
         })
     }
     
+    $scope.removeStudyGroup = function () {
+        $ngConfirm({
+            theme: "bootstrap",
+            animation: "zoom",
+            closeAnimation: "zoom",
+            title: "¿Está completamente seguro de eliminar este grupo de estudio?",
+            content: "Esta acción es irreversible.",
+            scope: $scope,
+            buttons: {
+                estoyseguro: {
+                    text: "Estoy seguro/a",
+                    btnClass: "btn-danger",
+                    action: function (scope, button) {
+                        DocentesService.removeStudyGroup($scope.studyGroup.name, function (res) {
+                            if (res.removed) {
+                                $route.reload()
+                                
+                                $scope.showForms = 2
+                                
+                                $ngConfirm({
+                                    theme: "bootstrap",
+                                    animation: "zoom",
+                                    closeAnimation: "zoom",
+                                    title: "Grupo de Estudio Eliminado",
+                                    content: "Se ha eliminado el grupo de estudio.",
+                                    scope: $scope,
+                                    buttons: {
+                                        entendido: {
+                                            text: "Entendido",
+                                            btnClass: "btn-primary",
+                                            action: function (scope, button) {
+                                            }
+                                        }
+                                    }
+                                })
+                            } else {
+                                $ngConfirm({
+                                    theme: "bootstrap",
+                                    animation: "zoom",
+                                    closeAnimation: "zoom",
+                                    title: "Ocurrió un error",
+                                    content: "Vuelva a intentarlo más tarde.",
+                                    scope: $scope,
+                                    buttons: {
+                                        entendido: {
+                                            text: "Entendido",
+                                            btnClass: "btn-primary",
+                                            action: function (scope, button) {
+                                                
+                                            }
+                                        }
+                                    }
+                                })
+                            }
+                        })
+                    }
+                },
+                
+                no: {
+                    text: "No",
+                    btnClass: "btn-default",
+                    action: function (scope, button) {}
+                }
+            }
+        })
+    }
+    
     // -------------------------------------------------------------------------
     
     // Avances -----------------------------------------------------------------
@@ -314,6 +524,8 @@ angular.module("DocentesCtrl", ["cp.ngConfirm"]).controller("DocentesController"
     }
     
     $scope.requestNewAdvance = function () {
+        $scope.advance.date = $scope.advance.date._d
+        
         DocentesService.requestNewAdvance($scope.advance, function (res) {
             if (res.saved) {
                 $route.reload()
@@ -426,10 +638,9 @@ angular.module("DocentesCtrl", ["cp.ngConfirm"]).controller("DocentesController"
     $scope.doComparison = function () {
         $scope.lookingForDifferences = true
         
-        if ($scope.difference.advance != "") {
+        if ($scope.difference.advance) {
             DocentesService.lookForDifferences($scope.difference.file, $scope.difference.advance, function (res) {
-                
-                if (res.length > 0) {
+                if (res.file1 && res.file2) {
                     let file1 = res.file1
                     let file2 = res.file2
                     let color = ""
@@ -487,7 +698,26 @@ angular.module("DocentesCtrl", ["cp.ngConfirm"]).controller("DocentesController"
     // Tesis -------------------------------------------------------------------
     
     $scope.showTesisForm = function () {
-        $scope.requestTesisFlag = true
+        if ($scope.tesis.studyGroup != "") {
+            $scope.requestTesisFlag = true
+        } else {
+            $ngConfirm({
+                theme: "bootstrap",
+                animation: "zoom",
+                closeAnimation: "zoom",
+                title: "Ocurrió un error",
+                content: "Debe escoger un grupo de estudio primero antes de solicitar una tesis.",
+                scope: $scope,
+                buttons: {
+                    entendido: {
+                        text: "Entendido",
+                        btnClass: "btn-primary",
+                        action: function (scope, button) {
+                        }
+                    }
+                }
+            })
+        }
     }
     
     $scope.getTesisInfo = function () {

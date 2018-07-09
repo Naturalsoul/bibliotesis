@@ -48,6 +48,36 @@ angular.module("AccountService", []).factory("AccountService", ["$http", functio
                     console.log(err.data)
                     next([])
                 })
+        },
+        
+        changePassword: function (oldPassword, nPassword, next) {
+            $http.post("/api/plataforma/user/p", {oldPassword: oldPassword, nPassword: nPassword})
+                .then(function (data) {
+                    next(data.data)
+                }, function (err) {
+                    console.log(err.data)
+                    next([])
+                })
+        },
+        
+        checkForPassword: function (next) {
+            $http.get("/api/plataforma/user/p")
+                .then(function (data) {
+                    next(data.data)
+                }, function(err) {
+                    console.log(err.data)
+                    next([])
+                })
+        },
+        
+        getAllSections: function (next) {
+            $http.get("/api/plataforma/account/sections")
+                .then(function (data) {
+                    next(data.data)
+                }, function (err) {
+                    console.log(err.data)
+                    next([])
+                })
         }
     }
 }])

@@ -28,16 +28,6 @@
               <div class="row">
                 <div class="col-sm-12">
                   <div class="form-group">
-                    <label for="password">
-                      Contraseña
-                    </label>
-                    <input type="password" class="form-control" placeholder="Contraseña del nuevo Usuario" ng-model="nAccount.password" required>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-sm-12">
-                  <div class="form-group">
                     <label for="aT">
                       Tipo de Cuenta
                     </label>
@@ -51,10 +41,14 @@
               <div class="row" ng-show="nAccount.accountType == 'true'">
                 <div class="col-sm-12">
                   <div class="form-group"`>
-                    <label for="studyGroup">
-                      Grupo de Estudio
+                    <label for="section">
+                      Elija una sección
                     </label>
-                    <input type="text" class="form-control" placeholder="Grupo de Estudio del Alumno" ng-model="nAccount.studyGroup" ng-required="nAccount.accountType == 'true'">
+                    <select class="form-control" ng-model="nAccount.section" ng-required="nAccount.accountType == 'true'">
+                      <option ng-repeat="s in sectionsList" value="{{s.code}}">
+                        {{s.code}}
+                      </option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -98,6 +92,7 @@
           </div>
       </div>
     </div>
+    <br>
     
     <!--
     <div class="card">

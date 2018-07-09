@@ -10,6 +10,7 @@ let UsersSchema = new Schema ({
     email: String,
     password: String,
     tesisGroup: {type: String, default: ""},
+    section: String,
     creationDate: {type: Date, default: Date.now},
     status: {type: Boolean, default: false},
     activationString: {type: String, default: ""},

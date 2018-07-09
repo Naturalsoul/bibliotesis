@@ -1,391 +1,519 @@
 <div class="container">
     <div class="row">
-        <div class="col-sm-12">
-            <ul class="nav justify-content-center">
-                <li class="nav-item">
-                    <a class="nav-link" href="#" ng-model="showForms" ng-click="showForms = 1">Agregar Alumnos</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" ng-model="showForms" ng-click="showForms = 2">Grupos de Estudio</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" ng-model="showForms" ng-click="showForms = 3">Avances</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" ng-model="showForms" ng-click="showForms = 4">Tesis</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <br>
-    <div class="row" ng-show="showForms == 1">
-        <div class="col-sm-12">
-            <div class="card">
-                <div class="card-header">
-                    Agregar un nuevo Alumno
+        <div class="col-sm-2">
+            <div class="row">
+                <div class="col-sm-12" ng-show="nSection.teacher.level != 0">
+                    <a class="nav-link" href="#" ng-model="showForms" ng-click="showForms = 1">Secciones</a>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <form ng-submit="addNewStudent()">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="form-group">
-                                            <label for="name">
-                                                Nombre del Alumno
-                                            </label>
-                                            <input type="text" name="name" class="form-control" ng-model="nStudent.name" required>
+                <div class="col-sm-12" ng-show="nSection.teacher.level != 0">
+                    <a class="nav-link" href="#" ng-model="showForms" ng-click="showForms = 2">Agregar Alumnos</a>
+                </div>
+                <div class="col-sm-12">
+                    <a class="nav-link" href="#" ng-model="showForms" ng-click="showForms = 3">Grupos de Estudio</a>
+                </div>
+                <div class="col-sm-12">
+                    <a class="nav-link" href="#" ng-model="showForms" ng-click="showForms = 4">Avances</a>
+                </div>
+                <div class="col-sm-12">
+                    <a class="nav-link" href="#" ng-model="showForms" ng-click="showForms = 5">Tesis</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-10">
+            <div class="row" ng-show="showForms == 1">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            Secciones
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <form ng-submit="addNewSection()">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <label for="code">
+                                                        Código de Sección
+                                                    </label>
+                                                    <input type="text" name="code" class="form-control" ng-model="nSection.code" required>
+                                                </div>
+                                            </div>
                                         </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <label for="teacher">
+                                                        Docente a cargo
+                                                    </label>
+                                                    <input type="text" name="teacher" class="form-control" ng-model="nSection.teacher.name" required disabled>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <button type="submit" class="btn btn-primary pull-right">
+                                                    Guardar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" class="align-middle text-center">Código de la Sección</th>
+                                                <th scope="col" class="align-middle text-center">Cantidad de Alumnos</th>
+                                                <th scope="col" class="align-middle text-center">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="s in sectionsList">
+                                                <th scope="row" class="align-middle text-center">{{s.code}}</th>
+                                                <td class="align-middle text-center">{{s.studentsQuantity || 0}}</td>
+                                                <td class="align-middle text-center">
+                                                    <a href="#" ng-click="removeSection(s.code)"><i class="fas fa-minus-circle"></i></a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" ng-show="showForms == 2">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            Agregar un nuevo Alumno
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <form ng-submit="addNewStudent()">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <label for="name">
+                                                        Nombre del Alumno
+                                                    </label>
+                                                    <input type="text" name="name" class="form-control" ng-model="nStudent.name" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <label for="email">
+                                                        Correo Electrónico del Alumno
+                                                    </label>
+                                                    <input type="email" name="email" class="form-control" ng-model="nStudent.email" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--<div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <label for="password">
+                                                        Contraseña del Alumno
+                                                    </label>
+                                                    <input type="password" name="password" class="form-control" ng-model="nStudent.password" required>
+                                                </div>
+                                            </div>
+                                        </div>-->
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <label for="studyGroup">
+                                                        Grupo de Estudio
+                                                    </label>
+                                                    <input type="text" name="studyGroup" class="form-control" ng-model="nStudent.studyGroup" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <label for="section">
+                                                        Sección
+                                                    </label>
+                                                    <select class="form-control" ng-model="nStudent.section" required>
+                                                        <option ng-repeat="s in sectionsList" value="{{s.code}}">
+                                                            {{s.code}}
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12 float-right">
+                                                <button type="submit" class="btn btn-primary">
+                                                    Agregar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" ng-show="showForms == 3">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            Grupos de Estudio
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <form ng-submit="updateStudyGroup()">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <label for="section">
+                                                        Sección
+                                                    </label>
+                                                    <select class="form-control" ng-model="studyGroup.section" ng-change="getStudyGroupsBySection()" required>
+                                                        <option ng-repeat="s in sectionsList" value="{{s.code}}">
+                                                            {{s.code}}
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row" ng-show="showStudyGroupsFlag">
+                                            <div class="col-sm-12">
+                                                <div class="form-group">
+                                                    <label for="name">
+                                                        Grupo de Estudio
+                                                    </label>
+                                                    <select ng-model="studyGroup.name" class="form-control" ng-change="showStudyGroupInputs()">
+                                                        <option ng-repeat="s in studyGroupList" value="{{s.name}}">
+                                                            {{s.name}}
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div ng-show="showStudyGroupInputsFlag">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="form-group">
+                                                        <label for="theme">
+                                                            Tema
+                                                        </label>
+                                                        <input type="text" name="theme" class="form-control" ng-model="studyGroup.theme">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-10">
+                                                    <div class="form-group">
+                                                        <label for="addNewStudents">
+                                                            Agregar Alumnos al Grupo de Estudio
+                                                        </label>
+                                                        <select class="form-control" ng-model="studentToAdd">
+                                                            <option ng-repeat="sl in studentList" value="{{sl.email}}">
+                                                                {{sl.name}}
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <button type="button" class="btn btn-success" ng-click="addUserToGroup()" style="margin-top: 30px;">
+                                                        <i class="fas fa-user-plus"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <table class="table table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col" class="align-middle text-center">Nombre del Alumno</th>
+                                                                <th scope="col" class="align-middle text-center">Correo Electrónico</th>
+                                                                <th scope="col" class="align-middle text-center">Acciones</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr ng-repeat="s in studyGroup.students">
+                                                                <th scope="row" class="align-middle text-center">{{s.name}}</th>
+                                                                <td class="align-middle text-center">{{s.email}}</td>
+                                                                <td class="align-middle text-center">
+                                                                    <a href="#" ng-click="removeStudent(s.email)"><i class="fas fa-minus-circle"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <button type="submit" class="btn btn-primary float-right">
+                                                        Actualizar
+                                                    </button>
+                                                    <button type="button" class="btn btn-danger" ng-click="removeStudyGroup()">
+                                                        Eliminar Grupo de Estudio
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" ng-show="showForms == 4">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            Avances
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label for="section">
+                                            Sección
+                                        </label>
+                                        <select class="form-control" ng-model="studyGroup.section" ng-change="getStudyGroupsBySection()" required>
+                                            <option ng-repeat="s in sectionsList" value="{{s.code}}">
+                                                {{s.code}}
+                                            </option>
+                                        </select>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="form-group">
-                                            <label for="email">
-                                                Correo Electrónico del Alumno
-                                            </label>
-                                            <input type="email" name="email" class="form-control" ng-model="nStudent.email" required>
-                                        </div>
+                            </div>
+                            <div class="row" ng-show="showStudyGroupsFlag">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label for="name">
+                                            Grupo de Estudio
+                                        </label>
+                                        <select ng-model="advance.studyGroup" class="form-control" ng-change="showAdvanceInputs()">
+                                            <option ng-repeat="s in studyGroupList" value="{{s.name}}">
+                                                {{s.name}}
+                                            </option>
+                                        </select>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="form-group">
-                                            <label for="password">
-                                                Contraseña del Alumno
-                                            </label>
-                                            <input type="password" name="password" class="form-control" ng-model="nStudent.password" required>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="form-group">
-                                            <label for="studyGroup">
-                                                Grupo de Estudio
-                                            </label>
-                                            <input type="text" name="studyGroup" class="form-control" ng-model="nStudent.studyGroup" required>
-                                        </div>
-                                    </div>
-                                </div>
+                            </div>
+                            <div ng-show="showAdvanceInputsFlag">
                                 <div class="row">
                                     <div class="col-sm-12 float-right">
-                                        <button type="submit" class="btn btn-primary">
-                                            Agregar
+                                        <button type="button" class="btn btn-primary" ng-click="requestAdvance()">
+                                            Solicitar nuevo Avance
                                         </button>
                                     </div>
                                 </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row" ng-show="showForms == 2">
-        <div class="col-sm-12">
-            <div class="card">
-                <div class="card-header">
-                    Grupos de Estudio
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <form ng-submit="updateStudyGroup()">
-                                <div class="row">
+                                <div class="row" ng-show="requestAdvanceFlag" style="margin-top: 15px;">
                                     <div class="col-sm-12">
-                                        <div class="form-group">
-                                            <label for="name">
-                                                Grupo de Estudio
-                                            </label>
-                                            <select ng-model="studyGroup.name" class="form-control" ng-change="showStudyGroupInputs()">
-                                                <option ng-repeat="s in studyGroupList" value="{{s.name}}">
-                                                    {{s.name}}
-                                                </option>
-                                            </select>
-                                        </div>
+                                        <form ng-submit="requestNewAdvance()">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <label for="advanceDescription">
+                                                        Descripción del Avance
+                                                    </label>
+                                                    <textarea class="form-control" ng-model="advance.description" rows="3" required></textarea>
+                                                </div>
+                                                <div class="col-sm-8">
+                                                    <label for="date">
+                                                        Fecha límite para subir documentos
+                                                    </label>
+                                                    <input class="form-control"
+                                                       ng-model="advance.date"
+                                                       ng-model-options="{ updateOn: 'blur' }"
+                                                       placeholder="Seleccione una fecha..."
+                                                       locale="es"
+                                                       moment-picker="advance.date" required>
+                                                    <!--<input type="datetime-local" name="date" class="form-control" ng-model="advance.date" required>-->
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <button type="submit" class="btn btn-primary float-right" style="margin-top: 30px;">
+                                                        Solicitar Avance
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
-                                <div ng-show="showStudyGroupInputsFlag">
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="form-group">
-                                                <label for="theme">
-                                                    Tema
-                                                </label>
-                                                <input type="text" name="theme" class="form-control" ng-model="studyGroup.theme">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-10">
-                                            <div class="form-group">
-                                                <label for="addNewStudents">
-                                                    Agregar Alumnos al Grupo de Estudio
-                                                </label>
-                                                <select class="form-control" ng-model="studentToAdd">
-                                                    <option ng-repeat="sl in studentList" value="{{sl.email}}">
-                                                        {{sl.email}}
-                                                    </option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-2">
-                                            <button type="button" class="btn btn-success" ng-click="addUserToGroup()" style="margin-top: 30px;">
-                                                <i class="fas fa-user-plus"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <table class="table table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th scope="col" class="align-middle text-center">Nombre del Alumno</th>
-                                                        <th scope="col" class="align-middle text-center">Correo Electrónico</th>
-                                                        <th scope="col" class="align-middle text-center">Acciones</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr ng-repeat="s in studyGroup.students">
-                                                        <th scope="row" class="align-middle text-center">{{s.name}}</th>
-                                                        <td class="align-middle text-center">{{s.email}}</td>
-                                                        <td class="align-middle text-center">
-                                                            <a href="#" ng-click="removeStudent(s.email)"><i class="fas fa-minus-circle"></i></a>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <button type="submit" class="btn btn-primary float-right">
-                                                Actualizar
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row" ng-show="showForms == 3">
-        <div class="col-sm-12">
-            <div class="card">
-                <div class="card-header">
-                    Avances
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label for="name">
-                                    Grupo de Estudio
-                                </label>
-                                <select ng-model="advance.studyGroup" class="form-control" ng-change="showAdvanceInputs()">
-                                    <option ng-repeat="s in studyGroupList" value="{{s.name}}">
-                                        {{s.name}}
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div ng-show="showAdvanceInputsFlag">
-                        <div class="row">
-                            <div class="col-sm-12 float-right">
-                                <button type="button" class="btn btn-primary" ng-click="requestAdvance()">
-                                    Solicitar nuevo Avance
-                                </button>
-                            </div>
-                        </div>
-                        <div class="row" ng-show="requestAdvanceFlag" style="margin-top: 15px;">
-                            <div class="col-sm-12">
-                                <form ng-submit="requestNewAdvance()">
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="form-group">
-                                                <label for="advanceTitle">
-                                                    Título del Avance
-                                                </label>
-                                                <input type="text" name="advanceTitle" class="form-control" ng-model="advance.title" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12">
-                                            <label for="advanceDescription">
-                                                Descripción del Avance
-                                            </label>
-                                            <textarea class="form-control" ng-model="advance.description" rows="3" required></textarea>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <label for="tries">
-                                                Intentos para subir archivos
-                                            </label>
-                                            <input type="number" min="1" ng-min="1" name="tries" class="form-control" ng-model="advance.tries" required>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <label for="advanceNumber">
-                                                Avance Número
-                                            </label>
-                                            <input type="number" min="1" ng-min="1" name="advanceNumber" class="form-control" ng-model="advance.advanceNumber" required>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <button type="submit" class="btn btn-primary float-right" style="margin-top: 30px;">
-                                                Solicitar Avance
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <table class="table table-hover" style="margin-top: 30px;">
-                                <thead>
-                                    <tr>
-                                        <th scope="col" class="align-middle text-center">Nombre del Avance</th>
-                                        <th scope="col" class="align-middle text-center">Descripción</th>
-                                        <th scope="col" class="align-middle text-center">Documentos</th>
-                                        <th scope="col" class="align-middle text-center">Feedback</th>
-                                        <th scope="col" class="align-middle text-center">Intentos Restantes</th>
-                                        <th scope="col" class="align-middle text-center">Estado</th>
-                                        <th scope="col" class="align-middle text-center">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr ng-repeat="a in advanceList">
-                                        <th scope="row" class="align-middle text-center">{{a.title}}</th>
-                                        <td class="align-middle text-center">{{a.description}}</td>
-                                        <td class="align-middle text-center">
-                                            <a href="#" ng-click="downloadFile(a.files.docs[0])" ng-show="a.files" class="fileIcons">
-                                                <i class="far fa-file-pdf"></i>
-                                            </a>
-                                            <p ng-show="!a.files">
-                                                No hay documentos aún
-                                            </p>
-                                        </td>
-                                        <td class="align-middle text-center">{{a.feedback || "-"}}</td>
-                                        <td class="align-middle text-center">{{a.tries}}</td>
-                                        <td class="align-middle text-center">
-                                            <button type="button" class="btn btn-warning" disabled ng-show="!a.status">
-                                                Avance Abierto
-                                            </button>
-                                            <button type="button" class="btn btn-success" disabled ng-show="a.status">
-                                                Avance Cerrado
-                                            </button>
-                                        </td>
-                                        <td class="align-middle text-center">
-                                            <a href="#" ng-click="showApproveModal(a.id)" ng-show="!a.status"><i class="far fa-thumbs-up"></i></a>
-                                            <a href="#" ng-click="setFileToLookForDiffs(a.files.docs[0])" data-toggle="modal" data-target="#showDifferenceModal"><i class="fas fa-search"></i></a>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row" ng-show="showForms == 4">
-        <div class="col-sm-12">
-            <div class="card">
-                <div class="card-header">
-                    Tesis
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label for="name">
-                                    Grupo de Estudio
-                                </label>
-                                <select ng-model="tesis.studyGroup" class="form-control" ng-change="getTesisInfo()">
-                                    <option ng-repeat="s in studyGroupList" value="{{s.name}}">
-                                        {{s.name}}
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <button type="button" class="btn btn-primary" ng-click="showTesisForm()">
-                                Solicitar Tesis
-                            </button>
-                        </div>
-                    </div>
-                    <div class="row" ng-show="requestTesisFlag" style="margin-top: 15px;">
-                        <div class="col-sm-12">
-                            <form ng-submit="requestTesis()">
                                 <div class="row">
-                                    <div class="col-sm-6">
-                                        <label for="limitDate">
-                                            Fecha Límite
-                                        </label>
-                                        <input type="date" class="form-control" name="limitDate" ng-model="tesis.date" required>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <button type="submit" class="btn btn-primary float-right" style="margin-top: 30px;">
-                                            Solicitar
-                                        </button>
-                                    </div>
+                                    <table class="table table-hover" style="margin-top: 30px;">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" class="align-middle text-center">Avance Nº</th>
+                                                <th scope="col" class="align-middle text-center">Descripción</th>
+                                                <th scope="col" class="align-middle text-center">Documentos</th>
+                                                <th scope="col" class="align-middle text-center">Feedback</th>
+                                                <th scope="col" class="align-middle text-center">Fecha Límite</th>
+                                                <th scope="col" class="align-middle text-center">Estado</th>
+                                                <th scope="col" class="align-middle text-center">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="a in advanceList">
+                                                <th scope="row" class="align-middle text-center">{{a.advanceNumber}}</th>
+                                                <td class="align-middle text-center">{{a.description}}</td>
+                                                <td class="align-middle text-center">
+                                                    <a href="#" ng-click="downloadFile(a.files.docs[0])" ng-show="a.files" class="fileIcons">
+                                                        <i class="far fa-file-pdf"></i>
+                                                    </a>
+                                                    <p ng-show="!a.files">
+                                                        No hay documentos aún
+                                                    </p>
+                                                </td>
+                                                <td class="align-middle text-center">{{a.feedback || "-"}}</td>
+                                                <td class="align-middle text-center">{{a.date | date: "dd-MM-yyyy HH:mm:ss"}}</td>
+                                                <td class="align-middle text-center">
+                                                    <button type="button" class="btn btn-warning" disabled ng-show="!a.status">
+                                                        Avance Abierto
+                                                    </button>
+                                                    <button type="button" class="btn btn-success" disabled ng-show="a.status">
+                                                        Avance Cerrado
+                                                    </button>
+                                                </td>
+                                                <td class="align-middle text-center">
+                                                    <a href="#" ng-click="showApproveModal(a.id)" ng-show="!a.status"><i class="far fa-thumbs-up"></i></a>
+                                                    <a href="#" ng-click="setFileToLookForDiffs(a.files.docs[0])" data-toggle="modal" data-target="#showDifferenceModal"><i class="fas fa-search"></i></a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <table class="table table-hover" style="margin-top: 30px;">
-                            <thead>
-                                <tr>
-                                    <th scope="col" class="align-middle text-center">Grupo de Estudio</th>
-                                    <th scope="col" class="align-middle text-center">Titulo de Tesis</th>
-                                    <th scope="col" class="align-middle text-center">Fecha Límite</th>
-                                    <th scope="col" class="align-middle text-center">Documentos</th>
-                                    <th scope="col" class="align-middle text-center">Detalles</th>
-                                    <th scope="col" class="align-middle text-center">Nota</th>
-                                    <th scope="col" class="align-middle text-center">Estado</th>
-                                    <th scope="col" class="align-middle text-center">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat="t in tesisList">
-                                    <th scope="row" class="align-middle text-center">{{t.studyGroup}}</th>
-                                    <td class="align-middle text-center">{{t.title || "-"}}</td>
-                                    <td class="align-middle text-center">{{t.date | date: "dd/MM/yyyy"}}</td>
-                                    <td class="align-middle text-center">
-                                        <a href="#" ng-click="downloadFile(t.files)" ng-show="t.files" class="fileIcons">
-                                            <i class="far fa-file-pdf"></i>
-                                        </a>
-                                        <p ng-show="!t.files">
-                                            No hay documentos aún
-                                        </p>
-                                    </td>
-                                    <td class="align-middle text-center">
-                                        <button type="button" class="btn btn-primary" ng-click="seeTesisDetails(t)" ng-show="t.abstract" data-toggle="modal" data-target="#seeTesisDetailsModal" title="Abstract y Palabras Clave">
-                                            Ver más detalles
-                                        </button>
-                                        <span ng-show="!t.abstract">
-                                            -
-                                        </span>
-                                    </td>
-                                    <td class="align-middle text-center">{{(t.score == 1 && !t.status) ? "-" : t.score}}</td>
-                                    <td class="align-middle text-center">
-                                        <button type="button" class="btn btn-warning" disabled ng-show="!t.status">
-                                            Tesis Abierta
-                                        </button>
-                                        <button type="button" class="btn btn-success" disabled ng-show="t.status">
-                                            Tesis Cerrada
-                                        </button>
-                                    </td>
-                                    <td class="align-middle text-center">
-                                        <a href="#" ng-click="showApproveTesisModal(t.id)" ng-show="!t.status"><i class="far fa-thumbs-up"></i></a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                </div>
+            </div>
+            <div class="row" ng-show="showForms == 5">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            Tesis
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label for="section">
+                                            Sección
+                                        </label>
+                                        <select class="form-control" ng-model="studyGroup.section" ng-change="getStudyGroupsBySection()" required>
+                                            <option ng-repeat="s in sectionsList" value="{{s.code}}">
+                                                {{s.code}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" ng-show="showStudyGroupsFlag">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label for="name">
+                                            Grupo de Estudio
+                                        </label>
+                                        <select ng-model="tesis.studyGroup" class="form-control" ng-change="getTesisInfo()">
+                                            <option ng-repeat="s in studyGroupList" value="{{s.name}}">
+                                                {{s.name}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" ng-show="showStudyGroupsFlag">
+                                <div class="col-sm-12">
+                                    <button type="button" class="btn btn-primary" ng-click="showTesisForm()">
+                                        Solicitar Tesis
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row" ng-show="requestTesisFlag" style="margin-top: 15px;">
+                                <div class="col-sm-12">
+                                    <form ng-submit="requestTesis()">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <label for="limitDate">
+                                                    Fecha Límite
+                                                </label>
+                                                <input class="form-control"
+                                                       ng-model="tesis.date"
+                                                       ng-model-options="{ updateOn: 'blur' }"
+                                                       placeholder="Seleccione una fecha..."
+                                                       locale="es"
+                                                       moment-picker="tesis.date" required>
+                                                <!--<input type="date" class="form-control" name="limitDate" ng-model="tesis.date" required>-->
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <button type="submit" class="btn btn-primary float-right" style="margin-top: 30px;">
+                                                    Solicitar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <table class="table table-hover" style="margin-top: 30px;">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="align-middle text-center">Grupo de Estudio</th>
+                                            <th scope="col" class="align-middle text-center">Titulo de Tesis</th>
+                                            <th scope="col" class="align-middle text-center">Fecha Límite</th>
+                                            <th scope="col" class="align-middle text-center">Documentos</th>
+                                            <th scope="col" class="align-middle text-center">Detalles</th>
+                                            <th scope="col" class="align-middle text-center">Nota</th>
+                                            <th scope="col" class="align-middle text-center">Estado</th>
+                                            <th scope="col" class="align-middle text-center">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="t in tesisList">
+                                            <th scope="row" class="align-middle text-center">{{t.studyGroup}}</th>
+                                            <td class="align-middle text-center">{{t.title || "-"}}</td>
+                                            <td class="align-middle text-center">{{t.date | date: "dd/MM/yyyy HH:mm:ss"}}</td>
+                                            <td class="align-middle text-center">
+                                                <a href="#" ng-click="downloadFile(t.files)" ng-show="t.files" class="fileIcons">
+                                                    <i class="far fa-file-pdf"></i>
+                                                </a>
+                                                <p ng-show="!t.files">
+                                                    No hay documentos aún
+                                                </p>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <button type="button" class="btn btn-primary" ng-click="seeTesisDetails(t)" ng-show="t.abstract" data-toggle="modal" data-target="#seeTesisDetailsModal" title="Abstract y Palabras Clave">
+                                                    Ver más detalles
+                                                </button>
+                                                <span ng-show="!t.abstract">
+                                                    -
+                                                </span>
+                                            </td>
+                                            <td class="align-middle text-center">{{(t.score == 1 && !t.status) ? "-" : t.score}}</td>
+                                            <td class="align-middle text-center">
+                                                <button type="button" class="btn btn-warning" disabled ng-show="!t.status">
+                                                    Tesis Abierta
+                                                </button>
+                                                <button type="button" class="btn btn-success" disabled ng-show="t.status">
+                                                    Tesis Cerrada
+                                                </button>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <a href="#" ng-click="showApproveTesisModal(t.id)" ng-show="!t.status"><i class="far fa-thumbs-up"></i></a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -438,7 +566,7 @@
                                 Comparar con el siguiente avance
                             </label>
                             <select class="form-control" ng-model="difference.advance">
-                                <option ng-repeat="a in advanceList" value="{{a.id}}">{{a.title}}</option>
+                                <option ng-repeat="a in advanceList" value="{{a.id}}">Avance Nº {{a.advanceNumber}}</option>
                             </select>
                         </div>
                         <div class="col-sm-4">
@@ -478,7 +606,7 @@
                                 <label for="score">
                                     Nota
                                 </label>
-                                <input type="number" step="0.1" min="1" ng-min="1" name="score" class="form-control" ng-model="finalTesis.score" required>
+                                <input type="number" step="0.1" min="1" ng-min="1" max="7" ng-max="7" name="score" class="form-control" ng-model="finalTesis.score" required>
                             </div>
                         </div>
                     </div>

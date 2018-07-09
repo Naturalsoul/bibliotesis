@@ -4,13 +4,16 @@ angular.module("AccountCtrl", ["cp.ngConfirm"]).controller("AccountController", 
     $scope.nAccount = {
         name: "",
         email: "",
-        password: "",
         accountType: "",
         studyGroup: ""
     }
     
     AccountService.getUsers(function (res) {
         $scope.users = res
+    })
+    
+    AccountService.getAllSections(function (res) {
+        $scope.sectionsList = res
     })
     
     $scope.changeAccountType = function () {
@@ -65,7 +68,7 @@ angular.module("AccountCtrl", ["cp.ngConfirm"]).controller("AccountController", 
                     animation: "zoom",
                     closeAnimation: "zoom",
                     title: "Se ha creado al usuario",
-                    content: "Se ha creado al usuario con el correo " + $scope.nAccount.email + " y la contraseña " + $scope.nAccount.password,
+                    content: "Se ha creado al usuario con el correo " + $scope.nAccount.email + " y enviado un correo electrónico con sus credenciales a su email.",
                     scope: $scope,
                     buttons: {
                         entendido: {

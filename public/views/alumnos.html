@@ -1,137 +1,138 @@
 <div class="container">
     <div class="row">
-        <div class="col-sm-12">
-            <ul class="nav justify-content-center">
-                <li class="nav-item">
-                    <a class="nav-link" href="#" ng-model="showForms" ng-click="showForms = 1">Avances</a>
-                </li>
-                <li class="nav-item">
+        <div class="col-sm-2">
+            <div class="row">
+                <div class="col-sm-12">
+                   <a class="nav-link" href="#" ng-model="showForms" ng-click="showForms = 1">Avances</a> 
+                </div>
+                <div class="col-sm-12">
                     <a class="nav-link" href="#" ng-model="showForms" ng-click="showForms = 2">Tesis</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <br>
-    <div class="row">
-        <div class="col-sm-8">
-            <div class="form-group">
-                <label for="studyGroup">
-                    Grupo de Estudio
-                </label>
-                <input type="text" class="form-control" ng-model="studyGroup.name" disabled>
-            </div>
-        </div>
-    </div>
-    <br>
-    <div class="row" ng-show="showForms == 1">
-        <div class="col-sm-12">
-            <div class="card">
-                <div class="card-header">
-                    Avances
-                </div>
-                <div class="card-body">
-                    <table class="table table-hover" style="margin-top: 30px;">
-                        <thead>
-                            <tr>
-                                <th scope="col" class="align-middle text-center">Nombre del Avance</th>
-                                <th scope="col" class="align-middle text-center">Descripción</th>
-                                <th scope="col" class="align-middle text-center">Documentos</th>
-                                <th scope="col" class="align-middle text-center">Feedback</th>
-                                <th scope="col" class="align-middle text-center">Intentos Restantes</th>
-                                <th scope="col" class="align-middle text-center">Estado</th>
-                                <th scope="col" class="align-middle text-center">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="a in advanceList">
-                                <th scope="row" class="align-middle text-center">{{a.title}}</th>
-                                <td class="align-middle text-center">{{a.description}}</td>
-                                <td class="align-middle text-center">
-                                    <a href="#" ng-click="downloadFile(a.files.docs[0])" ng-show="a.files" class="fileIcons">
-                                        <i class="far fa-file-pdf"></i>
-                                    </a>
-                                    <p ng-show="!a.files">
-                                        No hay documentos aún
-                                    </p>
-                                </td>
-                                <td class="align-middle text-center">{{a.feedback || "-"}}</td>
-                                <td class="align-middle text-center">{{a.tries}}</td>
-                                <td class="align-middle text-center">
-                                    <button type="button" class="btn btn-warning" disabled ng-show="!a.status">
-                                        Avance Abierto
-                                    </button>
-                                    <button type="button" class="btn btn-success" disabled ng-show="a.status">
-                                        Avance Cerrado
-                                    </button>
-                                </td>
-                                <td class="align-middle text-center">
-                                    <a href="#" ng-show="a.tries > 0 && !a.status" ng-click="uploadFiles(a.id)" data-toggle="modal" data-target="#uploadFileModal" title="Subir Documentos">
-                                        <i class="fas fa-upload"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row" ng-show="showForms == 2">
-        <div class="col-sm-12">
-            <div class="card">
-                <div class="card-header">
-                    Tesis
+        <div class="col-sm-10">
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="form-group">
+                        <label for="studyGroup">
+                            Grupo de Estudio
+                        </label>
+                        <input type="text" class="form-control" ng-model="studyGroup.name" disabled>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <table class="table table-hover" style="margin-top: 30px;">
-                        <thead>
-                            <tr>
-                                <th scope="col" class="align-middle text-center">Título de Tesis</th>
-                                <th scope="col" class="align-middle text-center">Fecha Límite</th>
-                                <th scope="col" class="align-middle text-center">Documentos</th>
-                                <th scope="col" class="align-middle text-center">Detalles</th>
-                                <th scope="col" class="align-middle text-center">Nota</th>
-                                <th scope="col" class="align-middle text-center">Estado</th>
-                                <th scope="col" class="align-middle text-center">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="t in tesisList">
-                                <th scope="row" class="align-middle text-center">{{t.title || "-"}}</th>
-                                <td class="align-middle text-center">{{t.date | date: "dd/MM/yyyy"}}</td>
-                                <td class="align-middle text-center">
-                                    <a href="#" ng-click="downloadFile(t.files)" ng-show="t.files" class="fileIcons">
-                                        <i class="far fa-file-pdf"></i>
-                                    </a>
-                                    <p ng-show="!t.files">
-                                        No hay documentos aún
-                                    </p>
-                                </td>
-                                <td class="align-middle text-center">
-                                    <button type="button" class="btn btn-primary" ng-click="seeTesisDetails(t)" ng-show="t.abstract" data-toggle="modal" data-target="#seeTesisDetailsModal" title="Abstract y Palabras Clave">
-                                        Ver más detalles
-                                    </button>
-                                    <span ng-show="!t.abstract">
-                                        -
-                                    </span>
-                                </td>
-                                <td class="align-middle text-center">{{(t.score == 1 && !t.status) ? "-" : t.score}}</td>
-                                <td class="align-middle text-center">
-                                    <button type="button" class="btn btn-warning" disabled ng-show="!t.status">
-                                        Tesis Abierta
-                                    </button>
-                                    <button type="button" class="btn btn-success" disabled ng-show="t.status">
-                                        Tesis Cerrada
-                                    </button>
-                                </td>
-                                <td class="align-middle text-center">
-                                    <a href="#" ng-show="!t.status" ng-click="uploadTesis(t.id)" data-toggle="modal" data-target="#uploadTesisModal" title="Subir Documentos">
-                                        <i class="fas fa-upload"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+            </div>
+            <br>
+            <div class="row" ng-show="showForms == 1">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            Avances
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-hover" style="margin-top: 30px;">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="align-middle text-center">Avance Nº</th>
+                                        <th scope="col" class="align-middle text-center">Descripción</th>
+                                        <th scope="col" class="align-middle text-center">Documentos</th>
+                                        <th scope="col" class="align-middle text-center">Feedback</th>
+                                        <th scope="col" class="align-middle text-center">Fecha Límite</th>
+                                        <th scope="col" class="align-middle text-center">Estado</th>
+                                        <th scope="col" class="align-middle text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="a in advanceList">
+                                        <th scope="row" class="align-middle text-center">{{a.advanceNumber}}</th>
+                                        <td class="align-middle text-center">{{a.description}}</td>
+                                        <td class="align-middle text-center">
+                                            <a href="#" ng-click="downloadFile(a.files.docs[0])" ng-show="a.files" class="fileIcons">
+                                                <i class="far fa-file-pdf"></i>
+                                            </a>
+                                            <p ng-show="!a.files">
+                                                No hay documentos aún
+                                            </p>
+                                        </td>
+                                        <td class="align-middle text-center">{{a.feedback || "-"}}</td>
+                                        <td class="align-middle text-center">{{a.date | date: "dd-MM-yyyy HH:mm:ss"}}</td>
+                                        <td class="align-middle text-center">
+                                            <button type="button" class="btn btn-warning" disabled ng-show="!a.status">
+                                                Avance Abierto
+                                            </button>
+                                            <button type="button" class="btn btn-success" disabled ng-show="a.status">
+                                                Avance Cerrado
+                                            </button>
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <a href="#" ng-show="!a.status" ng-click="uploadFiles(a.id)" data-toggle="modal" data-target="#uploadFileModal" title="Subir Documentos">
+                                                <i class="fas fa-upload"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" ng-show="showForms == 2">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            Tesis
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-hover" style="margin-top: 30px;">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="align-middle text-center">Título de Tesis</th>
+                                        <th scope="col" class="align-middle text-center">Fecha Límite</th>
+                                        <th scope="col" class="align-middle text-center">Documentos</th>
+                                        <th scope="col" class="align-middle text-center">Detalles</th>
+                                        <th scope="col" class="align-middle text-center">Nota</th>
+                                        <th scope="col" class="align-middle text-center">Estado</th>
+                                        <th scope="col" class="align-middle text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="t in tesisList">
+                                        <th scope="row" class="align-middle text-center">{{t.title || "-"}}</th>
+                                        <td class="align-middle text-center">{{t.date | date: "dd/MM/yyyy"}}</td>
+                                        <td class="align-middle text-center">
+                                            <a href="#" ng-click="downloadFile(t.files)" ng-show="t.files" class="fileIcons">
+                                                <i class="far fa-file-pdf"></i>
+                                            </a>
+                                            <p ng-show="!t.files">
+                                                No hay documentos aún
+                                            </p>
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <button type="button" class="btn btn-primary" ng-click="seeTesisDetails(t)" ng-show="t.abstract" data-toggle="modal" data-target="#seeTesisDetailsModal" title="Abstract y Palabras Clave">
+                                                Ver más detalles
+                                            </button>
+                                            <span ng-show="!t.abstract">
+                                                -
+                                            </span>
+                                        </td>
+                                        <td class="align-middle text-center">{{(t.score == 1 && !t.status) ? "-" : t.score}}</td>
+                                        <td class="align-middle text-center">
+                                            <button type="button" class="btn btn-warning" disabled ng-show="!t.status">
+                                                Tesis Abierta
+                                            </button>
+                                            <button type="button" class="btn btn-success" disabled ng-show="t.status">
+                                                Tesis Cerrada
+                                            </button>
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <a href="#" ng-show="!t.status" ng-click="uploadTesis(t.id)" data-toggle="modal" data-target="#uploadTesisModal" title="Subir Documentos">
+                                                <i class="fas fa-upload"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

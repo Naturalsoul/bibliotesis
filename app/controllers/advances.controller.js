@@ -1,4 +1,5 @@
 const Advances = require("../models/advances.model")
+const moment   = require('moment-timezone');
 
 module.exports = {
     get: function (studyGroup, next) {
@@ -11,39 +12,33 @@ module.exports = {
     },
     
     save: function (advance, next) {
-        Advances.count({title: advance.title}, function (err, c) {
+        Advances.findOne().sort({creationDate: -1}).exec(function (err, data) {
             if (err) throw err
             
-            if (c > 0) next({saved: false})
-            else {
-                let nAdvance = new Advances ({
-                    studyGroup: advance.studyGroup,
-                    title: advance.title,
-                    description: advance.description,
-                    tries: advance.tries,
-                    status: false
-                })
-                
-                nAdvance.save()
-                
-                next({saved: true})
-            }
+            let nAdvance = new Advances ({
+                advanceNumber: (data != null) ? data.advanceNumber + 1 : 0,
+                studyGroup: advance.studyGroup,
+                description: advance.description,
+                date: moment(advance.date).tz("America/Santiago").format(),
+                status: false
+            })
+            
+            nAdvance.save()
+            
+            next({saved: true})
         })
     },
     
     updateFiles: function (advance, files, next) {
-        Advances.findOne({id: advance.id}, "tries", function (err, data) {
+        Advances.findOne({id: advance.id}, "date", function (err, data) {
             if (err) throw err
             
             if (data != null) {
-                if (data.tries >= 1) {
+                let d = moment(new Date()).tz("America/Santiago").format()
+                if (d < moment(data.date).tz("America/Santiago").format()) {
                     Advances.update({id: advance.id}, {
                         $set: {
                             files: files,
-                        },
-                        
-                        $inc: {
-                            tries: -1
                         }
                     }, function (err, data) {
                         if (err) throw err
@@ -53,7 +48,7 @@ module.exports = {
                     })
                     
                 } else {
-                    next({updated: false, message: "Se ha agotado la cantidad de intentos que tenía para subir el avance."})
+                    next({updated: false, message: "Se ha agotado el tiempo que tenía para subir el avance."})
                 } 
             } else next({updated: false})
         })

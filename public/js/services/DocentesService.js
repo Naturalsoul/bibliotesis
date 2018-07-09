@@ -1,5 +1,49 @@
 angular.module("DocentesService", []).factory("DocentesService", ["$http", function ($http) {
     return {
+        // Secciones -----------------------------------------------------------
+        
+        getTeacherInfo: function (next) {
+            $http.get("/api/plataforma/sections/teacher")
+                .then(function (data) {
+                    next(data.data)
+                }, function (err) {
+                    console.log(err.data)
+                    next([])
+                })
+        },
+        
+        addNewSection: function (section, next) {
+            $http.post("/api/plataforma/sections", {section})
+                .then(function (data) {
+                    next(data.data)
+                }, function (err) {
+                    console.log(err.data)
+                    next([])
+                })
+        },
+        
+        getSectionsList: function (next) {
+            $http.get("/api/plataforma/sections")
+                .then(function (data) {
+                    next(data.data)
+                }, function (err) {
+                    console.log(err.data)
+                    next([])
+                })
+        },
+        
+        removeSection: function (code, next) {
+            $http.put("/api/plataforma/sections/rm", {code})
+                .then(function (data) {
+                    next(data.data)
+                }, function (err) {
+                    console.log(err.data)
+                    next([])
+                })
+        },
+        
+        // ---------------------------------------------------------------------
+        
         // Añadir Alumnos ------------------------------------------------------
         
         addNewStudent: function (student, next) {
@@ -16,8 +60,8 @@ angular.module("DocentesService", []).factory("DocentesService", ["$http", funct
         
         // Grupos de Estudio ---------------------------------------------------
         
-        getStudyGroups: function (next) {
-            $http.get("/api/plataforma/studygroups")
+        getStudyGroups: function (section, next) {
+            $http.post("/api/plataforma/studygroups", {section})
                 .then(function (data) {
                     next(data.data)
                 }, function (err) {
@@ -36,12 +80,22 @@ angular.module("DocentesService", []).factory("DocentesService", ["$http", funct
                 })
         },
         
-        getStudentList: function (next) {
-            $http.get("/api/plataforma/students")
+        getStudentList: function (section, next) {
+            $http.post("/api/plataforma/students", {section})
                 .then(function (data) {
                     next(data.data)
                 }, function (err) {
                     console.log(err)
+                    next([])
+                })
+        },
+        
+        removeStudyGroup: function (studyGroup, next) {
+            $http.put("/api/plataforma/studygroup/rm", {studyGroup})
+                .then(function (data) {
+                    next(data.data)
+                }, function (err) {
+                    console.log(err.data)
                     next([])
                 })
         },

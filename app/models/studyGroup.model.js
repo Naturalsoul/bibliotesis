@@ -8,7 +8,9 @@ let StudyGroupSchema = new Schema ({
     id: Number,
     name: String,
     theme: {type: String, default: ""},
-    students: {type: Array, default: []}
+    students: {type: Array, default: []},
+    section: String,
+    creationDate: {type: Date, default: Date.now}
 })
 
 StudyGroupSchema.plugin(autoIncrement.plugin, {

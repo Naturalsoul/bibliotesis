@@ -1,8 +1,42 @@
-angular.module("TesisCtrl", ["cp.ngConfirm"]).controller("TesisController", ["$scope", "$location", "TesisService", "$ngConfirm", "$route", function ($scope, $location, TesisService, $ngConfirm, $route) {
+angular.module("TesisCtrl", ["cp.ngConfirm", 'chart.js']).controller("TesisController", ["$scope", "$location", "TesisService", "$ngConfirm", "$route", function ($scope, $location, TesisService, $ngConfirm, $route) {
     $scope.tesisList = []
+    $scope.monthLabelsGraph = []
+    $scope.monthDataGraph = []
+    $scope.options = {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
     
     TesisService.getAllByScore(function (res) {
-        $scope.tesisList = res
+        $scope.tesisList = res.byScore
+        
+        console.log(res.chart)
+        
+        let months = [
+            "Enero",
+            "Febrero",
+            "Marzo",
+            "Abril",
+            "Mayo",
+            "Junio",
+            "Julio",
+            "Agosto",
+            "Septiembre",
+            "Octubre",
+            "Noviembre",
+            "Diciembre"
+        ]
+        
+        res.chart.forEach(e => {
+            let m = months[e._id.month - 1]
+            $scope.monthLabelsGraph.push(m)
+            $scope.monthDataGraph.push(e.q)
+        })
     })
     
     $scope.seeTesisDetails = function (t) {

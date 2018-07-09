@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" ng-show="isLoggedIn">
     <div class="row">
         <div class="col-sm-4">
             <div class="input-group mb-3">
@@ -47,6 +47,15 @@
         </div>
     </div>
 </div>
+<div class="container" ng-show="!isLoggedIn">
+    <div class="row">
+        <div class="col-sm-12 text-center align-middle">
+            <p class="font-italic">
+                <a href="/login">Ingrese a la plataforma</a> con sus credenciales para acceder al repositorio.
+            </p>
+        </div>
+    </div>
+</div>
 
 <div class="modal fade" id="seeTesisModal" tabindex="-1" role="dialog" aria-labelledby="seeTesisModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
@@ -85,4 +94,62 @@
       </div>
     </div>
   </div>
+ </div>
 </div>
+
+<!-- Modal -->
+<form ng-submit="changePassword()">
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title muli" id="exampleModalLabel">Cambio de Contraseña</h5>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+                <div class="col-sm-12">
+                    <p class="muli text-medium">
+                        Antes de continuar, debe cambiar su Contraseña.
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="oldPassword-addon">
+                                <i class="fas fa-key"></i>
+                            </span>
+                        </div>
+                        <input type="password" name="oldPassword" id="oldPassword" class="form-control muli" ng-model="changePasswordData.oldPassword" placeholder="Contraseña actual" aria-label="Contraseña actual" aria-describedby="oldPassword-addon" required>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="password-addon">
+                                <i class="fas fa-key"></i>
+                            </span>
+                        </div>
+                        <input type="password" name="password" id="password" class="form-control muli" ng-model="changePasswordData.nPassword" placeholder="Nueva Contraseña" aria-label="Nueva Contraseña" aria-describedby="password-addon" required>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="password2-addon">
+                                <i class="fas fa-key"></i>
+                            </span>
+                        </div>
+                        <input type="password" name="password2" id="password2" class="form-control muli" ng-model="changePasswordData.nPassword2" placeholder="Repita la nueva Contraseña" aria-label="Repita la nueva Contraseña" aria-describedby="password2-addon" required>
+                    </div>
+                </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+</form>

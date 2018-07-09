@@ -1,4 +1,5 @@
 const Tesis = require("../models/tesis.model")
+const moment   = require('moment-timezone');
 
 module.exports = {
     get: function (studyGroup, next) {
@@ -14,30 +15,40 @@ module.exports = {
         Tesis.find({score: {$gte: 6}}, function (err, data) {
             if (err) throw err
             
-            if (data != null) next(data)
-            else next([])
+            let res = {}
+            
+            if (data != null) {
+                res.byScore = data
+                
+                Tesis.aggregate([{
+                    $group: {
+                        _id: {month: {$month: "$date"}},
+                        q: {$sum: 1}
+                    }
+                }]).exec(function (err, data) {
+                    if (err) throw err
+                    
+                    if (data != null) {
+                        res.chart = data
+                        
+                        next(res)
+                    } else next([])
+                })
+            } else next([])
         })
     },
     
     save: function (tesis, next) {
-        Tesis.count({studyGroup: tesis.studyGroup}, function (err, c) {
-            if (err) throw err
-            
-            if (c > 0) {
-                next({saved: false, message: "Ya existe una tesis para este grupo."})
-            } else {
-                let nTesis = new Tesis ({
-                    studyGroup: tesis.studyGroup,
-                    title: tesis.title,
-                    description: tesis.description,
-                    date: tesis.date
-                })
-                
-                nTesis.save()
-                
-                next({saved: true})
-            }
+        let nTesis = new Tesis ({
+            studyGroup: tesis.studyGroup,
+            title: tesis.title,
+            description: tesis.description,
+            date: moment(tesis.date).tz("America/Santiago").format()
         })
+        
+        nTesis.save()
+        
+        next({saved: true})
     },
     
     uploadFile: function (id, tesis, file, next) {
@@ -45,9 +56,9 @@ module.exports = {
             if (err) throw err
             
             if (data != null) {
-                let d = new Date()
+                let d = moment(new Date()).tz("America/Santiago").format()
                 
-                if (d < data.date) {
+                if (d < moment(data.date).tz("America/Santiago").format()) {
                     let keywords = tesis.keywords.split(",")
                     keywords = keywords.map(e => e.trim())
                     

@@ -1,5 +1,6 @@
 // Controllers ----------------
 
+const Sections    = require("./controllers/sections.controller")
 const Users       = require("./controllers/users.controller")
 const StudyGroup  = require("./controllers/studyGroup.controller")
 const Advances    = require("./controllers/advances.controller")
@@ -131,7 +132,77 @@ module.exports = function (app) {
         }
     })
     
+    app.get("/api/plataforma/user/p", function(req, res) {
+        if (typeof req.session.logged != "undefined") {
+            Users.checkForPassword(req.session.email, function (data) {
+                res.json(data)
+            })
+        } else {
+            res.json([])
+        }
+    })
+    
+    app.post("/api/plataforma/user/p", function(req, res) {
+        if (typeof req.session.logged != "undefined") {
+            Users.changePassword(req.session.email, req.body.oldPassword, req.body.nPassword, function (data) {
+                res.json(data)
+            })
+        } else {
+            res.json([])
+        }
+    })
+    
+    app.get("/api/plataforma/account/sections", function (req, res) {
+        if (typeof req.session.email != "undefined") {
+            Sections.getAll(function (data) {
+                res.json(data)
+            })
+        } else {
+            res.json([])
+        }
+    })
+    
     // Docente ---------------------------------------------------
+    
+    app.get("/api/plataforma/sections/teacher", function (req, res) {
+        if (typeof req.session.email != "undefined") {
+            Users.getUserInfo(req.session.email, function (data) {
+                res.json(data)
+            })
+        } else {
+            res.json([])
+        }
+    })
+    
+    app.post("/api/plataforma/sections", function (req, res) {
+        if (typeof req.session.email != "undefined") {
+            Sections.save(req.body.section, function (data) {
+                res.json(data)
+            })
+        } else {
+            res.json([])
+        }
+    })
+    
+    app.get("/api/plataforma/sections", function (req, res) {
+        if (typeof req.session.email != "undefined") {
+            Sections.getList(req.session.email, function (data) {
+                res.json(data)
+            })
+        } else {
+            res.json([])
+        }
+    })
+    
+    app.put("/api/plataforma/sections/rm", function (req, res) {
+        if (typeof req.session.email != "undefined") {
+            Sections.remove(req.body.code, function (data) {
+                res.json(data)
+            })
+        } else {
+            res.json([])
+        }
+    })
     
     app.post("/api/plataforma/add/student", function (req, res) {
         if (typeof req.session.email != "undefined") {
@@ -143,9 +214,9 @@ module.exports = function (app) {
         }
     })
     
-    app.get("/api/plataforma/studygroups", function(req, res) {
+    app.post("/api/plataforma/studygroups", function(req, res) {
         if (typeof req.session.email != "undefined") {
-            StudyGroup.get(function (data) {
+            StudyGroup.get(req.body.section, function (data) {
                 res.json(data)
             })
         } else {
@@ -163,9 +234,19 @@ module.exports = function (app) {
         }
     })
     
-    app.get("/api/plataforma/students", function (req, res) {
+    app.put("/api/plataforma/studygroup/rm", function (req, res) {
         if (typeof req.session.email != "undefined") {
-            Users.getAllStudents(function (data) {
+            StudyGroup.remove(req.body.studyGroup, function (data) {
+                res.json(data)
+            })
+        } else {
+            res.json([])
+        }
+    })
+    
+    app.post("/api/plataforma/students", function (req, res) {
+        if (typeof req.session.email != "undefined") {
+            Users.getAllStudents(req.body.section, function (data) {
                 res.json(data)
             })
         } else {

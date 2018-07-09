@@ -1,25 +1,8 @@
-angular.module("MainCtrl", []).controller("MainController", ["$scope", "$location", "AuthService", "AccountService", "TesisService", function ($scope, $location, AuthService, AccountService, TesisService) {
-    $scope.isLoggedIn = false
-    $scope.student = true
-    
-    AuthService.isLoggedIn(function (res) {
-        if (res.logged) {
-            $scope.isLoggedIn = true
-            AccountService.getUserInfo(function (res) {
-                $scope.student = (res.student) ? res : false
-                $scope.admin = (res.level == 0) ? true : false
-            })
-        } else {
-            $scope.isLoggedIn = false
-        }
-    })
-    
-    $scope.logout = function () {
-        AuthService.logout(function (res) {
-            if (!res.logged) {
-                window.location.replace("/")
-            }
-        })
+angular.module("MainCtrl", ["cp.ngConfirm"]).controller("MainController", ["$scope", "$location", "$ngConfirm", "AuthService", "AccountService", "TesisService", function ($scope, $location, $ngConfirm, AuthService, AccountService, TesisService) {
+    $scope.changePasswordData = {
+        oldPassword: "",
+        nPassword: "",
+        nPassword2: ""
     }
     
     TesisService.getByFlag(function (res) {
@@ -59,5 +42,100 @@ angular.module("MainCtrl", []).controller("MainController", ["$scope", "$locatio
         document.body.appendChild(mapForm);
 
         mapForm.submit();
+    }
+    
+    AccountService.checkForPassword(function (res) {
+        if (res.changePassword) {
+            console.log("asdfasdf")
+            $("#changePasswordModal").modal({
+                backdrop: "static",
+                keyboard: false,
+                show: true
+            })
+        }
+    })
+    
+    $scope.changePassword = function () {
+        if ($scope.changePasswordData.oldPassword && $scope.changePasswordData.nPassword && $scope.changePasswordData.nPassword2) {
+            if ($scope.changePasswordData.nPassword == $scope.changePasswordData.nPassword2) {
+                AccountService.changePassword($scope.changePasswordData.oldPassword, $scope.changePasswordData.nPassword, function (res) {
+                    if (res.changed) {
+                        $("#changePasswordModal").modal("hide")
+                        
+                        $ngConfirm({
+                            theme: "bootstrap",
+                            animation: "zoom",
+                            closeAnimation: "zoom",
+                            title: "Contraseña Actualizada",
+                            content: "Se ha actualizado su contraseña. Ya puede ingresar al sistema con sus nuevas credenciales de acceso.",
+                            scope: $scope,
+                            buttons: {
+                                entendido: {
+                                    text: "Entendido",
+                                    btnClass: "btn-primary",
+                                    action: function (scope, button) {
+                                        
+                                    }
+                                }
+                            }
+                        })
+                    } else {
+                        $ngConfirm({
+                            theme: "bootstrap",
+                            animation: "zoom",
+                            closeAnimation: "zoom",
+                            title: "Ocurrió un error",
+                            content: "Ocurrió un error en el proceso. Asegúrese que su contraseña actual es la correcta o inténtelo más tarde.",
+                            scope: $scope,
+                            buttons: {
+                                entendido: {
+                                    text: "Entendido",
+                                    btnClass: "btn-primary",
+                                    action: function (scope, button) {
+                                        
+                                    }
+                                }
+                            }
+                        })
+                    }
+                })
+            } else {
+                $ngConfirm({
+                    theme: "bootstrap",
+                    animation: "zoom",
+                    closeAnimation: "zoom",
+                    title: "Ocurrió un error",
+                    content: "Las contraseñas no coinciden.",
+                    scope: $scope,
+                    buttons: {
+                        entendido: {
+                            text: "Entendido",
+                            btnClass: "btn-primary",
+                            action: function (scope, button) {
+                                
+                            }
+                        }
+                    }
+                })
+            }
+        } else {
+            $ngConfirm({
+                theme: "bootstrap",
+                animation: "zoom",
+                closeAnimation: "zoom",
+                title: "Datos incompletos",
+                content: "Debe ingresar todos los datos que se le solicitan.",
+                scope: $scope,
+                buttons: {
+                    entendido: {
+                        text: "Entendido",
+                        btnClass: "btn-primary",
+                        action: function (scope, button) {
+                            
+                        }
+                    }
+                }
+            })
+        }
     }
 }])

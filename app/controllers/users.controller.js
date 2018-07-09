@@ -1,6 +1,7 @@
 const bcrypt        = require("bcrypt-nodejs")
 const Users         = require("../models/users.model")
 const StudyGroup    = require("../models/studyGroup.model")
+const Sections      = require("../models/sections.model")
 const nodemailer    = require("nodemailer")
 
 module.exports = {
@@ -31,7 +32,7 @@ module.exports = {
                 })
             }
         })
-    },
+    },*/
     
     verificateEmail: function (user, next) {
         Users.findOne({email: user.email}, "activationString", function (err, data) {
@@ -54,7 +55,7 @@ module.exports = {
                 next({})
             }
         })
-    },*/
+    },
     
     login: function (email, password, next) {
         Users.findOne({email: email}, "password status", function (err, data) {
@@ -136,7 +137,11 @@ module.exports = {
             else {
                 const salt = bcrypt.genSaltSync(10)
                 
-                bcrypt.hash(account.password, salt, null, function (err, hash) {
+                let str = "";
+                for ( ; str.length < 16; str += Math.random().toString( 16 ).substr( 2 ) );
+                str = str.substr( 0, 16 );
+                
+                bcrypt.hash(str, salt, null, function (err, hash) {
                     if (err) throw err
                     
                     let nAccount = new Users ({
@@ -145,6 +150,7 @@ module.exports = {
                         password: hash,
                         student: account.accountType,
                         tesisGroup: (account.studyGroup) ? account.studyGroup : "",
+                        section: (account.section) ? account.section : "",
                         status: true,
                         changePassword: true
                     })
@@ -152,7 +158,7 @@ module.exports = {
                     nAccount.save()
                     
                     if (typeof account.studyGroup != "undefined" && account.studyGroup != "") {
-                        StudyGroup.count({name: account.studyGroup}, function (err, c) {
+                        StudyGroup.count({name: account.studyGroup, section: account.section}, function (err, c) {
                             if (err) throw err
                             
                             if (c > 0) {
@@ -166,7 +172,7 @@ module.exports = {
                                 }, function (err, data) {
                                     if (err) throw err
                                     
-                                    if (data != null) next({registered: true})
+                                    if (data != null) sendEmail(str)
                                     else next({registered: false})
                                 })
                             } else {
@@ -175,28 +181,101 @@ module.exports = {
                                     students: [{
                                         name: account.name,
                                         email: account.email
-                                    }]
+                                    }],
+                                    section: account.section
                                 })
                                 
                                 nStudyGroup.save()
                                 
-                                next({registered: true})
+                                sendEmail()
                             }
                         })
                         
-                    } else next({registered: true})
+                    } else sendEmail()
                 })
+                
+                function sendEmail () {
+                    var smtpTransport = nodemailer.createTransport({
+                      host: "smtp.gmail.com",
+                      auth: {
+                            type: "login",
+                            user: "noreplydeveloping@gmail.com",
+                            pass: "herbs_321"
+                      }
+                    });
+                    
+                    let mailOptions = {
+                        from: '"ClouDoc" <noreplydeveloping@gmail.com>', // sender address
+                        to: account.email, // list of receivers
+                        subject: 'Se ha creado una cuenta para ti en ClouDoc', // Subject line
+                        generateTextFromHTML: true,
+                        html: '<h2>Se ha creado una cuenta para ti en ClouDoc</h2><br /><p>Ya puedes ingresar a la plataforma de ClouDoc con las siguientes credenciales:</p><br /><ul><li>Email: ' + account.email + '</li><li>Contraseña: ' + str + '</li></ul>' // html body
+                    };
+                    
+                    smtpTransport.sendMail(mailOptions, function(error, response) {
+                      if (error) {
+                        console.log(error);
+                      } else {
+                        console.log(response);
+                        next({registered: true})
+                      }
+                      smtpTransport.close();
+                    });
+                }
             }
         })
     },
     
     removeUser: function (email, next) {
-        Users.remove({email}, function (err, data) {
+        Users.findOne({email}, function (err, data) {
             if (err) throw err
             
-            if (data != null) next({removed: true})
-            else next({removed: false})
+            if (data != null) {
+                if (data.student) {
+                    let studyGroup = data.tesisGroup
+                    
+                    StudyGroup.count({name: studyGroup}, function (err, c) {
+                        if (err) throw err
+                        
+                        if (c > 0) {
+                            StudyGroup.findOne({name: studyGroup}, function (err, data) {
+                                if (err) throw err
+                                
+                                if (data != null) {
+                                    let students = data.students
+                                    
+                                    students = students.filter(e => e.email != email)
+                                    
+                                    StudyGroup.update({name: studyGroup}, {
+                                        $set: {
+                                            students: students
+                                        }
+                                    }, function (err, data) {
+                                        if (err) throw err
+                                        
+                                        if (data != null) removeUserFromDatabase()
+                                        else next({removed: false})
+                                    })
+                                } else next({removed: false})
+                            })
+                        } else {
+                            removeUserFromDatabase()
+                        }
+                    })
+                } else {
+                    removeUserFromDatabase()
+                }
+            } else next({removed: false})
         })
+        
+        function removeUserFromDatabase () {
+            Users.remove({email}, function (err, data) {
+                if (err) throw err
+                
+                if (data != null) next({removed: true})
+                else next({removed: false})
+            })
+        }
     },
     
     addNewStudent: function (student, next) {
@@ -208,13 +287,18 @@ module.exports = {
             } else {
                 const salt = bcrypt.genSaltSync(10)
                 
-                bcrypt.hash(student.password, salt, null, function (err, hash) {
+                let str = "";
+                for ( ; str.length < 16; str += Math.random().toString( 16 ).substr( 2 ) );
+                str = str.substr( 0, 16 );
+                
+                bcrypt.hash(str, salt, null, function (err, hash) {
                     if (err) throw err
                     
                     let nUser = new Users ({
                         name: student.name,
                         email: student.email,
                         password: hash,
+                        section: student.section,
                         tesisGroup: student.studyGroup,
                         status: true,
                         changePassword: true
@@ -222,7 +306,7 @@ module.exports = {
                     
                     nUser.save()
                     
-                    StudyGroup.count({name: student.studyGroup}, function (err, c) {
+                    StudyGroup.count({name: student.studyGroup, section: student.section}, function (err, c) {
                         if (err) throw err
                         
                         if (c > 0) {
@@ -243,7 +327,8 @@ module.exports = {
                                 students: [{
                                     name: student.name,
                                     email: student.email
-                                }]
+                                }],
+                                section: student.section
                             })
                             
                             nStudyGroup.save()
@@ -267,7 +352,7 @@ module.exports = {
                             to: student.email, // list of receivers
                             subject: 'Activa tu cuenta en ClouDoc', // Subject line
                             generateTextFromHTML: true,
-                            html: '<h2>Se ha creado una cuenta para ti en ClouDoc</h2><br /><p>Ya puedes ingresar a la plataforma de ClouDoc con las siguientes credenciales:</p><br /><ul><li>Email: ' + student.email + '</li><li>Contraseña: ' + student.password + '</li></ul>' // html body
+                            html: '<h2>Se ha creado una cuenta para ti en ClouDoc</h2><br /><p>Ya puedes ingresar a la plataforma de ClouDoc con las siguientes credenciales:</p><br /><ul><li>Email: ' + student.email + '</li><li>Contraseña: ' + str + '</li></ul>' // html body
                         };
                         
                         smtpTransport.sendMail(mailOptions, function(error, response) {
@@ -285,8 +370,8 @@ module.exports = {
         })
     },
     
-    getAllStudents: function (next) {
-        Users.find({student: true}, function (err, data) {
+    getAllStudents: function (section, next) {
+        Users.find({student: true, section}, function (err, data) {
             if (err) throw err
             
             if (data != null) {
@@ -294,6 +379,47 @@ module.exports = {
             } else {
                 next([])
             }
+        })
+    },
+    
+    checkForPassword: function (email, next) {
+        Users.findOne({email: email}, "changePassword", function (err, data) {
+            if (err) next({changePassword: false})
+
+            if (data.changePassword) next({changePassword: true})
+            else next({changePassword: false})
+        })
+    },
+    
+    changePassword: function (email, password, nPassword, next) {
+        Users.findOne({email: email}, "password", function (err, data) {
+            if (err) next({changed: false})
+
+            if (data != null) {
+                bcrypt.compare(password, data.password, function (err, data) {
+                    if (err) next({changed: false})
+
+                    if (data) {
+                        const salt = bcrypt.genSaltSync(10)
+
+                        bcrypt.hash(nPassword, salt, null, function (err, hash) {
+                            if (err) next({changed: false})
+
+                            Users.update({email: email}, {
+                                $set: {
+                                    password: hash,
+                                    changePassword: false
+                                }
+                            }, function(err, data) {
+                                if (err) next({changed: false})
+
+                                if (data != null) next({changed: true})
+                                else next({changed: false})
+                            })
+                        })
+                    } else next({changed: false})
+                })
+            } else next({changed: false})
         })
     }
 }

@@ -6,10 +6,10 @@ autoIncrement.initialize(db)
 
 let AdvancesSchema = new Schema ({
     id: Number,
+    advanceNumber: {type: Number, default: 0},
     studyGroup: String,
-    title: String,
     description: String,
-    tries: {type: Number, default: 1},
+    date: Date,
     files: {type: Object, default: {}},
     feedback: {type: String, default: ""},
     status: {type: Boolean, default: false},

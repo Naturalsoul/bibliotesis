@@ -1,5 +1,31 @@
 <div class="container">
     <div class="row">
+        <div class="col-sm-2">
+            <button type="button" class="btn btn-primary" ng-click="seeChart = !seeChart">
+                <span ng-show="!seeChart">Ver cantidad de Tesis</span>
+                <span ng-show="seeChart">Ocultar cantidad de Tesis</span>
+            </button>
+        </div>
+    </div>
+    <br>
+    <div class="row" ng-show="seeChart">
+        <div class="col-sm-12">
+            <div class="card">
+                <h5 class="card-header">
+                    Cantidad de Tesis Mensual
+                </h5>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-12 center-block">
+                            <canvas id="bar" class="chart chart-bar" chart-data="monthDataGraph" chart-labels="monthLabelsGraph" chart-options="options"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
         <div class="col-sm-12">
             <div class="card">
                 <h5 class="card-header">
@@ -55,6 +81,7 @@
             </div>
         </div>
     </div>
+    <br>
 </div>
 
 <div class="modal fade" id="seeTesisDetailsModal" tabindex="-1" role="dialog" aria-labelledby="seeTesisDetailsModalLabel" aria-hidden="true">
